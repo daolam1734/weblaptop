@@ -156,7 +156,7 @@ $total = $subtotal - $discount;
 
             <div class="voucher-section">
                 <div class="voucher-label">
-                    <i class="bi bi-ticket-perforated"></i>
+                    <span class="sparkle-effect"></span>
                     <span>GrowTech Voucher</span>
                 </div>
                 <div class="d-flex align-items-center">

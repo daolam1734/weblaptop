@@ -11,8 +11,34 @@ CREATE TABLE IF NOT EXISTS `users` (
   `full_name` VARCHAR(255),
   `phone` VARCHAR(50),
   `role` ENUM('admin','user') NOT NULL DEFAULT 'user',
+  `email_verified` TINYINT(1) DEFAULT 0,
+  `verification_token` VARCHAR(255),
+  `verification_expires` DATETIME,
+  `failed_logins` INT DEFAULT 0,
+  `locked_until` DATETIME,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+-- Auth tokens for "Remember Me"
+CREATE TABLE IF NOT EXISTS `auth_tokens` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL,
+  `token_hash` VARCHAR(255) NOT NULL,
+  `expires_at` DATETIME NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Password resets
+CREATE TABLE IF NOT EXISTS `password_resets` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL,
+  `token` VARCHAR(255) NOT NULL,
+  `expires_at` DATETIME NOT NULL,
+  `used` TINYINT(1) DEFAULT 0,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- User addresses (multiple per user)

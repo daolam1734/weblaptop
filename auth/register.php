@@ -40,6 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             setEmailVerificationToken($uid, $token, $expires);
             $link = sendVerificationEmailSimulated($email, $token);
             set_flash('success', "Đăng ký thành công. Vui lòng kiểm tra email để xác thực tài khoản. (Link test: <a href='".htmlspecialchars($link)."' target='_blank'>Xác thực</a>)");
+            header('Location: login.php');
+            exit;
         } else {
             $errors[] = 'Đăng ký thất bại, thử lại sau.';
         }

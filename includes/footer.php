@@ -24,17 +24,17 @@
       <div class="col-md-3">
         <h6 class="text-dark fw-bold mb-3">THANH TOÁN</h6>
         <div class="d-flex flex-wrap gap-2">
-            <i class="bi bi-credit-card fs-4"></i>
-            <i class="bi bi-bank fs-4"></i>
-            <i class="bi bi-cash-stack fs-4"></i>
+            <span class="sparkle-effect fs-4"></span>
+            <span class="sparkle-effect fs-4"></span>
+            <span class="sparkle-effect fs-4"></span>
         </div>
       </div>
       <div class="col-md-3">
         <h6 class="text-dark fw-bold mb-3">THEO DÕI CHÚNG TÔI</h6>
         <ul class="list-unstyled small">
-          <li><a href="#" class="text-muted text-decoration-none"><i class="bi bi-facebook me-2"></i>Facebook</a></li>
-          <li><a href="#" class="text-muted text-decoration-none"><i class="bi bi-instagram me-2"></i>Instagram</a></li>
-          <li><a href="#" class="text-muted text-decoration-none"><i class="bi bi-linkedin me-2"></i>LinkedIn</a></li>
+          <li><a href="#" class="text-muted text-decoration-none"><span class="sparkle-effect me-2"></span>Facebook</a></li>
+          <li><a href="#" class="text-muted text-decoration-none"><span class="sparkle-effect me-2"></span>Instagram</a></li>
+          <li><a href="#" class="text-muted text-decoration-none"><span class="sparkle-effect me-2"></span>LinkedIn</a></li>
         </ul>
       </div>
     </div>

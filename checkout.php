@@ -134,7 +134,7 @@ require_once __DIR__ . "/includes/header.php";
             <div class="address-border"></div>
             <div class="p-4">
                 <div class="section-title">
-                    <i class="bi bi-geo-alt-fill"></i> Địa Chỉ Nhận Hàng
+                    <span class="sparkle-effect"></span> Địa Chỉ Nhận Hàng
                 </div>
                 <?php if (empty($addresses)): ?>
                     <div class="d-flex align-items-center justify-content-between">
@@ -205,7 +205,7 @@ require_once __DIR__ . "/includes/header.php";
         <div class="checkout-section">
             <div class="d-flex align-items-center justify-content-between">
                 <div class="section-title mb-0">
-                    <i class="bi bi-ticket-perforated text-danger"></i> GrowTech Voucher
+                    <span class="sparkle-effect text-danger"></span> GrowTech Voucher
                 </div>
                 <div class="d-flex align-items-center">
                     <?php if ($voucher): ?>
@@ -220,9 +220,9 @@ require_once __DIR__ . "/includes/header.php";
         <div class="checkout-section">
             <div class="section-title mb-4">Phương thức thanh toán</div>
             <div class="mb-4">
-                <div class="payment-option active" onclick="selectPayment(this, 'cod')">Thanh toán khi nhận hàng (COD)</div>
-                <div class="payment-option" onclick="selectPayment(this, 'bank')">Chuyển khoản ngân hàng</div>
-                <input type="hidden" name="payment_method" id="payment_method" value="cod">
+                <div class="payment-option active" onclick="selectPayment(this, 'tien_mat')">Thanh toán khi nhận hàng (COD)</div>
+                <div class="payment-option" onclick="selectPayment(this, 'chuyen_khoan')">Chuyển khoản ngân hàng</div>
+                <input type="hidden" name="payment_method" id="payment_method" value="tien_mat">
             </div>
 
             <div class="bg-light p-4">

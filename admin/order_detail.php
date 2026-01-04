@@ -12,36 +12,37 @@ $order_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 // Fetch order info
 $stmt = $pdo->prepare("
-    SELECT o.*, u.full_name as customer_name, u.email as customer_email
+    SELECT o.*, u.full_name as customer_name, u.email as customer_email,
+           ua.recipient_name, ua.phone as customer_phone, ua.address_line1, ua.district, ua.city
     FROM orders o 
     LEFT JOIN users u ON o.user_id = u.id 
+    LEFT JOIN user_addresses ua ON o.address_id = ua.id
     WHERE o.id = ?
 ");
 $stmt->execute([$order_id]);
 $order = $stmt->fetch();
 
 if (!$order) {
-    set_flash("Không tìm thấy đơn hàng.", "danger");
+    set_flash("error", "Không tìm thấy đơn hàng.");
     header("Location: orders.php");
     exit;
 }
 
 // Fetch order items
 $stmt = $pdo->prepare("
-    SELECT oi.*, p.name as product_name, p.sku
+    SELECT oi.*
     FROM order_items oi
-    JOIN products p ON oi.product_id = p.id
     WHERE oi.order_id = ?
 ");
 $stmt->execute([$order_id]);
 $items = $stmt->fetchAll();
 
-require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/includes/header.php';
 ?>
 
-<div class="container py-4">
+<div class="container-fluid">
     <div class="mb-4">
-        <a href="orders.php" class="btn btn-link p-0 text-decoration-none"><i class="bi bi-arrow-left"></i> Quay lại danh sách</a>
+        <a href="orders.php" class="btn btn-link p-0 text-decoration-none"><span class="sparkle-effect"></span> Quay lại danh sách</a>
     </div>
 
     <div class="row">
@@ -68,16 +69,28 @@ require_once __DIR__ . '/../includes/header.php';
                                             <div class="fw-bold"><?php echo htmlspecialchars($it['product_name']); ?></div>
                                             <small class="text-muted">SKU: <?php echo htmlspecialchars($it['sku']); ?></small>
                                         </td>
-                                        <td class="text-center"><?php echo number_format($it['price'], 0, ',', '.'); ?> đ</td>
+                                        <td class="text-center"><?php echo number_format($it['unit_price'], 0, ',', '.'); ?> đ</td>
                                         <td class="text-center"><?php echo $it['quantity']; ?></td>
-                                        <td class="text-end fw-bold"><?php echo number_format($it['price'] * $it['quantity'], 0, ',', '.'); ?> đ</td>
+                                        <td class="text-end fw-bold"><?php echo number_format($it['subtotal'], 0, ',', '.'); ?> đ</td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
                             <tfoot class="table-light">
                                 <tr>
-                                    <td colspan="3" class="text-end">Tổng cộng:</td>
-                                    <td class="text-end text-danger fw-bold fs-5"><?php echo number_format($order['total_amount'], 0, ',', '.'); ?> đ</td>
+                                    <td colspan="3" class="text-end">Tạm tính:</td>
+                                    <td class="text-end"><?php echo number_format($order['subtotal'], 0, ',', '.'); ?> đ</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end">Phí vận chuyển:</td>
+                                    <td class="text-end"><?php echo number_format($order['shipping_fee'], 0, ',', '.'); ?> đ</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end">Giảm giá:</td>
+                                    <td class="text-end">-<?php echo number_format($order['discount'], 0, ',', '.'); ?> đ</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" class="text-end fw-bold">Tổng cộng:</td>
+                                    <td class="text-end text-danger fw-bold fs-5"><?php echo number_format($order['total'], 0, ',', '.'); ?> đ</td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -94,10 +107,18 @@ require_once __DIR__ . '/../includes/header.php';
                 <div class="card-body">
                     <p class="mb-1"><strong>Họ tên:</strong> <?php echo htmlspecialchars($order['customer_name'] ?: 'Khách vãng lai'); ?></p>
                     <p class="mb-1"><strong>Email:</strong> <?php echo htmlspecialchars($order['customer_email'] ?: 'N/A'); ?></p>
-                    <p class="mb-1"><strong>Số điện thoại:</strong> <?php echo htmlspecialchars($order['phone']); ?></p>
+                    <p class="mb-1"><strong>Số điện thoại:</strong> <?php echo htmlspecialchars($order['customer_phone']); ?></p>
                     <hr>
                     <p class="mb-1"><strong>Địa chỉ giao hàng:</strong></p>
-                    <p class="text-muted mb-0"><?php echo nl2br(htmlspecialchars($order['shipping_address'])); ?></p>
+                    <p class="text-muted mb-0">
+                        <?php echo htmlspecialchars($order['recipient_name']); ?><br>
+                        <?php echo htmlspecialchars($order['address_line1']); ?><br>
+                        <?php echo htmlspecialchars($order['district']); ?>, <?php echo htmlspecialchars($order['city']); ?>
+                    </p>
+                    <hr>
+                    <p class="mb-1"><strong>Ghi chú:</strong></p>
+                    <p class="text-muted small"><?php echo nl2br(htmlspecialchars($order['notes'] ?: 'Không có ghi chú')); ?></p>
+                </div>
                 </div>
             </div>
 
@@ -124,4 +145,4 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 </div>
 
-<?php require_once __DIR__ . '/../includes/footer.php'; ?>
+<?php require_once __DIR__ . '/includes/footer.php'; ?>

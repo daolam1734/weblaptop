@@ -111,7 +111,7 @@ require_once __DIR__ . '/includes/header.php';
                                                 <span class="badge bg-primary">Mặc định</span>
                                             <?php endif; ?>
                                         </h6>
-                                        <a href="?delete_address=<?php echo $addr['id']; ?>" class="text-danger" onclick="return confirm('Xóa địa chỉ này?')"><i class="bi bi-trash"></i></a>
+                                        <a href="?delete_address=<?php echo $addr['id']; ?>" class="text-danger" onclick="return confirm('Xóa địa chỉ này?')"><span class="sparkle-effect"></span></a>
                                     </div>
                                     <p class="mb-1"><strong><?php echo htmlspecialchars($addr['recipient_name']); ?></strong></p>
                                     <p class="mb-1 text-muted"><?php echo htmlspecialchars($addr['phone']); ?></p>

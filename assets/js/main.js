@@ -151,4 +151,100 @@ document.addEventListener('DOMContentLoaded', function () {
       setTimeout(() => { try { el.remove(); } catch(e){} }, 300);
     }, 5000);
   });
+
+  // Back to Top Button
+  const backToTop = document.createElement('div');
+  backToTop.id = 'back-to-top';
+  backToTop.innerHTML = '<i class="bi bi-arrow-up"></i>';
+  document.body.appendChild(backToTop);
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) backToTop.classList.add('show');
+    else backToTop.classList.remove('show');
+  });
+
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Scroll Container Navigation (Prev/Next buttons)
+  const scrollContainers = document.querySelectorAll('.scroll-container');
+  console.log("GrowTech: Found " + scrollContainers.length + " scroll containers");
+
+  scrollContainers.forEach((container, index) => {
+    const wrapper = container.closest('.scroll-wrapper');
+    if (!wrapper) {
+      console.warn("GrowTech: No wrapper found for scroll container " + index);
+      return;
+    }
+
+    const btnLeft = wrapper.querySelector('.scroll-btn-left');
+    const btnRight = wrapper.querySelector('.scroll-btn-right');
+
+    if (btnLeft) {
+      btnLeft.addEventListener('click', (e) => {
+        e.preventDefault();
+        container.scrollTo({ 
+          left: container.scrollLeft - 400, 
+          behavior: 'smooth' 
+        });
+      });
+    }
+
+    if (btnRight) {
+      btnRight.addEventListener('click', (e) => {
+        e.preventDefault();
+        container.scrollTo({ 
+          left: container.scrollLeft + 400, 
+          behavior: 'smooth' 
+        });
+      });
+    }
+
+    // Auto-scroll logic: slowly scroll when not hovered
+    let isHovered = false;
+    container.addEventListener('mouseenter', () => isHovered = true);
+    container.addEventListener('mouseleave', () => isHovered = false);
+    
+    // Also pause on button hover
+    if (btnLeft) {
+      btnLeft.addEventListener('mouseenter', () => isHovered = true);
+      btnLeft.addEventListener('mouseleave', () => isHovered = false);
+    }
+    if (btnRight) {
+      btnRight.addEventListener('mouseenter', () => isHovered = true);
+      btnRight.addEventListener('mouseleave', () => isHovered = false);
+    }
+
+    setInterval(() => {
+      if (!isHovered && container.scrollWidth > container.clientWidth) {
+        // If we are near the end, go back to start
+        if (Math.ceil(container.scrollLeft + container.clientWidth) >= container.scrollWidth - 10) {
+          container.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          // Scroll by a fixed amount (e.g., 400px) every 3 seconds
+          container.scrollBy({ left: 400, behavior: 'smooth' });
+        }
+      }
+    }, 3000);
+  });
+
+  // Flash Sale Timer
+  const timerH = document.getElementById('timer-h');
+  const timerM = document.getElementById('timer-m');
+  const timerS = document.getElementById('timer-s');
+
+  if (timerH && timerM && timerS) {
+    let hours = 2, minutes = 45, seconds = 12;
+    setInterval(() => {
+      seconds--;
+      if (seconds < 0) { seconds = 59; minutes--; }
+      if (minutes < 0) { minutes = 59; hours--; }
+      if (hours < 0) { hours = 23; }
+      
+      timerH.textContent = hours.toString().padStart(2, '0');
+      timerM.textContent = minutes.toString().padStart(2, '0');
+      timerS.textContent = seconds.toString().padStart(2, '0');
+    }, 1000);
+  }
 });

@@ -14,7 +14,7 @@ $categories = $pdo->query("SELECT * FROM categories")->fetchAll();
 </style>
 
 <div class="filter-group">
-    <div class="sidebar-title"><i class="bi bi-list-ul"></i> Tất Cả Danh Mục</div>
+    <div class="sidebar-title"><span class="sparkle-effect"></span> Tất Cả Danh Mục</div>
     <?php foreach ($categories as $cat): ?>
         <a href="/weblaptop/index.php?category=<?php echo $cat["slug"]; ?>" class="sidebar-link <?php echo (isset($_GET["category"]) && $_GET["category"] == $cat["slug"]) ? "active" : ""; ?>">
             <?php echo htmlspecialchars($cat["name"]); ?>
@@ -23,7 +23,7 @@ $categories = $pdo->query("SELECT * FROM categories")->fetchAll();
 </div>
 
 <div class="filter-group">
-    <div class="sidebar-title"><i class="bi bi-funnel"></i> BỘ LỌC TÌM KIẾM</div>
+    <div class="sidebar-title"><span class="sparkle-effect"></span> BỘ LỌC TÌM KIẾM</div>
     <div class="small fw-bold mb-2">Theo Thương Hiệu</div>
     <?php
     $brands = $pdo->query("SELECT name FROM brands LIMIT 5")->fetchAll();

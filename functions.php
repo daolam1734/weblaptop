@@ -1,6 +1,27 @@
 <?php
 require_once __DIR__ . '/config/database.php';
 
+if (session_status() == PHP_SESSION_NONE) session_start();
+
+// Auto-login via Remember Me cookie
+if (empty($_SESSION['user_id']) && !empty($_COOKIE['weblaptop_remember'])) {
+    $token = $_COOKIE['weblaptop_remember'];
+    $stmt = $pdo->prepare("SELECT t.*, u.full_name, u.username, u.role FROM auth_tokens t JOIN users u ON t.user_id = u.id WHERE t.expires_at > NOW()");
+    $stmt->execute();
+    $tokens = $stmt->fetchAll();
+    foreach ($tokens as $t) {
+        if (password_verify($token, $t['token_hash'])) {
+            $_SESSION['user_id'] = $t['user_id'];
+            $_SESSION['user_name'] = $t['full_name'];
+            $_SESSION['user_role'] = $t['role'];
+            if ($t['role'] === 'admin') {
+                $_SESSION['admin_logged_in'] = $t['username'];
+            }
+            break;
+        }
+    }
+}
+
 function getProduct($id) {
     global $pdo;
     $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ?");
@@ -271,5 +292,16 @@ function display_flash() {
         echo '<div class="alert alert-' . $cls . ' flash-alert" role="alert">' . $msg . '</div>';
         echo '</div>';
     }
+}
+
+function slugify($text) {
+    $text = preg_replace('~[^\pL\d]+~u', '-', $text);
+    $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+    $text = preg_replace('~[^-\w]+~', '', $text);
+    $text = trim($text, '-');
+    $text = preg_replace('~-+~', '-', $text);
+    $text = strtolower($text);
+    if (empty($text)) return 'n-a';
+    return $text;
 }
 
