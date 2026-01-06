@@ -57,7 +57,6 @@ require_once __DIR__ . '/includes/header.php';
     .status-da_xac_nhan { background: #e3f2fd; color: #2196f3; }
     .status-da_gui { background: #f0f5ff; color: #2f54eb; }
     .status-da_giao { background: #e8f5e9; color: #4caf50; }
-    .status-hoan_thanh { background: #e3f2fd; color: #2196f3; }
     .status-huy { background: #ffebee; color: #f44336; }
     
     .customer-info { display: flex; align-items: center; }
@@ -154,7 +153,6 @@ require_once __DIR__ . '/includes/header.php';
                                         case 'da_xac_nhan': echo 'Đã xác nhận'; break;
                                         case 'da_gui': echo 'Đang giao'; break;
                                         case 'da_giao': echo 'Đã giao'; break;
-                                        case 'hoan_thanh': echo 'Hoàn thành'; break;
                                         case 'huy': echo 'Đã hủy'; break;
                                         default: echo $o['order_status'];
                                     }

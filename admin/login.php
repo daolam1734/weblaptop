@@ -30,11 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <style>
     :root {
-      --primary-color: #2c3e50;
-      --accent-color: #3498db;
+      --shopee-orange: #ee4d2d;
+      --tet-red: #d32f2f;
+      --tet-gold: #ffc107;
     }
     body {
-      background: #f0f2f5;
+      background: #f5f5f5;
       height: 100vh;
       display: flex;
       align-items: center;
@@ -45,12 +46,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       width: 100%;
       max-width: 400px;
       background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
       overflow: hidden;
     }
     .login-header {
-      background: var(--primary-color);
+      background: var(--tet-red);
       padding: 40px 20px;
       text-align: center;
       color: #fff;
@@ -70,11 +71,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       border: 1px solid #ddd;
     }
     .form-control:focus {
-      border-color: var(--accent-color);
-      box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.1);
+      border-color: var(--tet-red);
+      box-shadow: 0 0 0 0.25rem rgba(211, 47, 47, 0.1);
     }
     .btn-login {
-      background: var(--accent-color);
+      background: var(--tet-red);
       border: none;
       padding: 12px;
       border-radius: 8px;
@@ -83,14 +84,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       transition: all 0.2s;
     }
     .btn-login:hover {
-      background: #2980b9;
+      background: #b71c1c;
       transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+      box-shadow: 0 5px 15px rgba(211, 47, 47, 0.3);
     }
-    .brand-icon {
-      font-size: 40px;
-      margin-bottom: 10px;
-      display: block;
+    .tet-icon {
+      margin-bottom: 15px;
     }
   </style>
 </head>
@@ -98,11 +97,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="login-card">
   <div class="login-header">
-    <div class="brand-icon">
-      <i class="bi bi-shield-lock"></i>
+    <div class="tet-icon">
+      <svg viewBox="0 0 24 24" width="48" height="48">
+        <rect x="5" y="3" width="14" height="18" rx="2" fill="#fff"/>
+        <path d="M12,10 L19,3 L5,3 Z" fill="#ffc107"/>
+        <circle cx="12" cy="12" r="2" fill="#d32f2f"/>
+      </svg>
     </div>
     <div class="brand">GROWTECH</div>
-    <div class="small opacity-75">Hệ thống quản trị cửa hàng</div>
+    <div class="small opacity-75">Seller Center - Admin Portal</div>
   </div>
   
   <div class="login-body">

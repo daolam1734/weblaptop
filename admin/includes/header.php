@@ -22,9 +22,6 @@ if (empty($_SESSION['admin_logged_in'])) {
       --sidebar-width: 260px;
       --primary-color: #2c3e50;
       --accent-color: #3498db;
-      --success-color: #27ae60;
-      --danger-color: #e74c3c;
-      --warning-color: #f1c40f;
     }
     body { background-color: var(--admin-bg); font-family: 'Inter', -apple-system, sans-serif; }
     .admin-wrapper { display: flex; min-height: 100vh; }
@@ -51,13 +48,13 @@ if (empty($_SESSION['admin_logged_in'])) {
     .admin-navbar .brand {
       font-size: 22px;
       font-weight: 800;
-      color: var(--primary-color);
+      color: var(--shopee-orange);
       text-decoration: none;
       display: flex;
       align-items: center;
       letter-spacing: -0.5px;
     }
-    .admin-navbar .brand .brand-icon { font-size: 28px; }
+    .admin-navbar .brand .tet-icon { margin-right: 10px; font-size: 28px; }
 
     /* Search Bar */
     .nav-search { max-width: 400px; width: 100%; margin-left: 40px; }
@@ -73,8 +70,12 @@ if (empty($_SESSION['admin_logged_in'])) {
 
 <div class="admin-navbar">
   <a href="dashboard.php" class="brand">
-    <span class="brand-icon me-2">
-      <i class="bi bi-laptop text-primary"></i>
+    <span class="tet-icon">
+      <svg viewBox="0 0 24 24" width="28" height="28" style="vertical-align: middle;">
+        <rect x="5" y="3" width="14" height="18" rx="2" fill="#d32f2f"/>
+        <path d="M12,10 L19,3 L5,3 Z" fill="#b71c1c"/>
+        <circle cx="12" cy="12" r="2" fill="#ffc107"/>
+      </svg>
     </span> GROWTECH <span class="ms-2 text-dark fw-light d-none d-md-inline" style="font-size: 15px; border-left: 1px solid #ddd; padding-left: 12px;">Seller Center 2026</span>
   </a>
 
