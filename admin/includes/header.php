@@ -18,9 +18,6 @@ if (empty($_SESSION['admin_logged_in'])) {
   <link href="/weblaptop/assets/css/style.css" rel="stylesheet">
   <style>
     :root {
-      --shopee-orange: #ee4d2d;
-      --tet-red: #d32f2f;
-      --tet-gold: #ffc107;
       --admin-bg: #f5f5f5;
       --sidebar-width: 260px;
       --primary-color: #2c3e50;
@@ -113,9 +110,6 @@ if (empty($_SESSION['admin_logged_in'])) {
     </div>
   </div>
 </div>
-
-<div class="tet-corner">🌸</div>
-<div class="tet-corner-left">🌸</div>
 
 <div class="admin-wrapper">
     <?php include __DIR__ . '/sidebar.php'; ?>
