@@ -52,7 +52,36 @@ $recent_orders = $pdo->query("
 ")->fetchAll();
 
 // Low stock products
-$low_stock = $pdo->query("SELECT * FROM products WHERE stock < 10 ORDER BY stock ASC LIMIT 5")->fetchAll();
+$low_stock = $pdo->query("
+    SELECT p.*, pi.url as image_url 
+    FROM products p 
+    LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.position = 0
+    WHERE p.stock < 10 
+    ORDER BY p.stock ASC 
+    LIMIT 5
+")->fetchAll();
+
+// Cancellation rate
+$total_orders_count = $pdo->query("SELECT COUNT(*) FROM orders")->fetchColumn() ?: 1;
+$cancelled_orders_count = $pdo->query("SELECT COUNT(*) FROM orders WHERE order_status = 'huy'")->fetchColumn();
+$cancel_rate = round(($cancelled_orders_count / $total_orders_count) * 100, 1);
+
+// Shop rating
+$avg_rating = $pdo->query("SELECT AVG(rating) FROM reviews WHERE status = 'duyet'")->fetchColumn() ?: 5.0;
+$avg_rating = round($avg_rating, 1);
+
+// Top selling products
+$top_selling = $pdo->query("
+    SELECT p.name, SUM(oi.quantity) as total_sold, pi.url as image_url
+    FROM order_items oi
+    JOIN products p ON oi.product_id = p.id
+    LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.position = 0
+    JOIN orders o ON oi.order_id = o.id
+    WHERE o.order_status = 'da_giao'
+    GROUP BY p.id
+    ORDER BY total_sold DESC
+    LIMIT 5
+")->fetchAll();
 
 require_once __DIR__ . '/includes/header.php';
 ?>
@@ -83,10 +112,10 @@ require_once __DIR__ . '/includes/header.php';
     .status-dang_cho { background: #fff4e5; color: #ff9800; }
     .status-da_xac_nhan { background: #e3f2fd; color: #2196f3; }
     .status-da_gui { background: #e8f5e9; color: #4caf50; }
+    .status-da_giao { background: #e8f5e9; color: #4caf50; }
+    .status-hoan_thanh { background: #e3f2fd; color: #2196f3; }
     .status-huy { background: #ffebee; color: #f44336; }
 
-    .tet-badge { background: #d32f2f; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 11px; margin-left: 10px; font-weight: 600; letter-spacing: 0.5px; }
-    
     .chart-container { position: relative; height: 320px; width: 100%; }
     
     .insight-card { padding: 15px; border-radius: 12px; background: #f8f9fa; border: 1px solid #eee; height: 100%; }
@@ -149,7 +178,7 @@ require_once __DIR__ . '/includes/header.php';
             <div class="col-lg-8">
                 <!-- To-do List Section -->
                 <div class="dashboard-section">
-                    <div class="section-title">Danh sách cần làm <span class="tet-badge">Tết Bính Ngọ 2026</span></div>
+                    <div class="section-title">Danh sách cần làm</div>
                     <div class="row g-0">
                         <div class="col">
                             <a href="orders.php?status=dang_cho" class="todo-item d-block">
@@ -227,6 +256,7 @@ require_once __DIR__ . '/includes/header.php';
                                                 case 'da_xac_nhan': echo 'Đã xác nhận'; break;
                                                 case 'da_gui': echo 'Đang giao'; break;
                                                 case 'da_giao': echo 'Đã giao'; break;
+                                                case 'hoan_thanh': echo 'Hoàn thành'; break;
                                                 case 'huy': echo 'Đã hủy'; break;
                                                 default: echo $order['order_status'];
                                             }
@@ -252,13 +282,13 @@ require_once __DIR__ . '/includes/header.php';
                         <div class="col-6">
                             <div class="insight-card text-center">
                                 <div class="insight-label">Tỉ lệ hủy</div>
-                                <div class="insight-value text-danger">2.4%</div>
+                                <div class="insight-value <?php echo $cancel_rate > 5 ? 'text-danger' : 'text-success'; ?>"><?php echo $cancel_rate; ?>%</div>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="insight-card text-center">
-                                <div class="insight-label">Tỉ lệ phản hồi</div>
-                                <div class="insight-value text-success">98%</div>
+                                <div class="insight-label">Đơn thành công</div>
+                                <div class="insight-value text-success"><?php echo round((($total_orders_count - $cancelled_orders_count) / $total_orders_count) * 100, 1); ?>%</div>
                             </div>
                         </div>
                         <div class="col-6">
@@ -270,10 +300,32 @@ require_once __DIR__ . '/includes/header.php';
                         <div class="col-6">
                             <div class="insight-card text-center">
                                 <div class="insight-label">Đánh giá shop</div>
-                                <div class="insight-value text-warning">4.9 <i class="bi bi-star-fill ms-1"></i></div>
+                                <div class="insight-value text-warning"><?php echo $avg_rating; ?> <i class="bi bi-star-fill ms-1"></i></div>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Top Selling Products -->
+                <div class="dashboard-section">
+                    <div class="section-title">Sản Phẩm Bán Chạy</div>
+                    <?php if (empty($top_selling)): ?>
+                        <p class="text-muted small text-center py-3">Chưa có dữ liệu bán hàng.</p>
+                    <?php else: ?>
+                        <div class="list-group list-group-flush">
+                            <?php foreach ($top_selling as $item): ?>
+                            <div class="list-group-item px-0 py-2 border-0 border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <img src="<?php echo htmlspecialchars($item['image_url'] ?: '/weblaptop/assets/images/no-image.png'); ?>" class="rounded-3 me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                                    <div class="flex-grow-1 min-w-0">
+                                        <div class="fw-bold small text-truncate"><?php echo htmlspecialchars($item['name']); ?></div>
+                                        <div class="text-muted small">Đã bán: <?php echo $item['total_sold']; ?></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Low Stock Alert -->
@@ -289,7 +341,7 @@ require_once __DIR__ . '/includes/header.php';
                             <?php foreach ($low_stock as $item): ?>
                             <div class="list-group-item px-0 py-3 border-0 border-bottom">
                                 <div class="d-flex align-items-center">
-                                    <img src="/weblaptop/assets/images/products/<?php echo $item['image']; ?>" class="rounded-3 me-3" style="width: 44px; height: 44px; object-fit: cover;" onerror="this.src='/weblaptop/assets/images/no-image.png'">
+                                    <img src="<?php echo htmlspecialchars($item['image_url'] ?: '/weblaptop/assets/images/no-image.png'); ?>" class="rounded-3 me-3" style="width: 44px; height: 44px; object-fit: cover;">
                                     <div class="flex-grow-1 min-w-0">
                                         <div class="fw-bold small text-truncate mb-1"><?php echo htmlspecialchars($item['name']); ?></div>
                                         <div class="text-danger small fw-bold">Còn lại: <?php echo $item['stock']; ?></div>
@@ -398,4 +450,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<?php require_once __DIR__ . '/includes/header.php'; ?>
+<?php require_once __DIR__ . '/includes/footer.php'; ?>
