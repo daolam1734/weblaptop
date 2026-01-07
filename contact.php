@@ -4,189 +4,293 @@ require_once __DIR__ . '/includes/header.php';
 
 $success = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // In a real app, we would save this to DB or send email
     $success = true;
 }
 ?>
 
 <style>
     :root {
-        --tet-red: #d32f2f;
-        --tet-gold: #ffc107;
-        --tet-bg: #f8f9fa;
+        --tet-red: #C62222;
+        --tet-gold: #D4AF37;
+        --tet-dark: #2d3436;
     }
-    body { background-color: var(--tet-bg); }
     
-    .contact-card {
-        background: #fff;
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        border: none;
-    }
-    .contact-info-side {
-        background: var(--tet-red);
+    .contact-hero {
+        background: linear-gradient(rgba(198, 34, 34, 0.9), rgba(139, 0, 0, 0.9)), url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+        background-size: cover;
+        background-position: center;
+        padding: 100px 0;
         color: #fff;
-        padding: 50px 40px;
+        text-align: center;
+        border-radius: 0 0 50px 50px;
+        margin-bottom: -50px;
+    }
+
+    .contact-methods {
+        margin-top: -50px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .method-card {
+        background: #fff;
+        border: none;
+        border-radius: 25px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         height: 100%;
+        box-shadow: 0 15px 45px rgba(0,0,0,0.05);
     }
-    .contact-form-side {
-        padding: 50px 40px;
+
+    .method-card:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 25px 60px rgba(198, 34, 34, 0.15);
     }
-    .info-item {
-        display: flex;
-        align-items: flex-start;
-        margin-bottom: 30px;
-    }
-    .info-item i {
-        font-size: 1.2rem;
-        margin-right: 20px;
-        margin-top: 5px;
-        color: var(--tet-gold);
-    }
-    .social-links a {
-        width: 40px;
-        height: 40px;
+
+    .method-icon {
+        width: 80px;
+        height: 80px;
+        background: var(--tet-soft-bg);
+        color: var(--tet-red);
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        background: rgba(255,255,255,0.1);
+        border-radius: 20px;
+        font-size: 2rem;
+        margin-bottom: 25px;
+        transition: 0.3s;
+    }
+
+    .method-card:hover .method-icon {
+        background: var(--tet-red);
         color: #fff;
-        border-radius: 50%;
-        margin-right: 10px;
-        transition: all 0.3s;
-        text-decoration: none;
+        transform: rotate(15deg);
     }
-    .social-links a:hover {
-        background: var(--tet-gold);
-        color: var(--tet-red);
-        transform: translateY(-3px);
+
+    .contact-main-section {
+        padding: 100px 0;
     }
-    .form-control, .form-select {
-        border-radius: 10px;
-        padding: 12px 15px;
-        border: 1px solid #eee;
-        background: #f9f9f9;
+
+    .form-container {
+        background: #fff;
+        border-radius: 30px;
+        padding: 50px;
+        box-shadow: 0 20px 70px rgba(0,0,0,0.06);
     }
+
+    .map-container {
+        border-radius: 30px;
+        overflow: hidden;
+        box-shadow: 0 20px 70px rgba(0,0,0,0.06);
+        height: 100%;
+        min-height: 500px;
+    }
+
+    .form-floating > .form-control:focus, .form-floating > .form-control:not(:placeholder-shown) {
+        padding-top: 1.625rem;
+        padding-bottom: 0.625rem;
+    }
+
+    .form-control {
+        border-radius: 12px;
+        border: 2px solid #f0f0f0;
+        padding: 12px 20px;
+    }
+
     .form-control:focus {
         border-color: var(--tet-red);
-        box-shadow: 0 0 0 0.25rem rgba(211, 47, 47, 0.1);
-        background: #fff;
+        box-shadow: none;
     }
-    .btn-send {
+
+    .btn-submit {
         background: var(--tet-red);
         color: #fff;
         border: none;
-        border-radius: 10px;
-        padding: 12px;
+        padding: 15px 40px;
+        border-radius: 50px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1px;
         transition: all 0.3s;
+        width: 100%;
     }
-    .btn-send:hover {
-        background: #b71c1c;
-        color: #fff;
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(211, 47, 47, 0.3);
+
+    .btn-submit:hover {
+        background: var(--tet-dark-red);
+        transform: scale(1.02);
+        box-shadow: 0 10px 25px rgba(198, 34, 34, 0.3);
+    }
+
+    .business-hours {
+        background: var(--tet-soft-bg);
+        border-radius: 20px;
+        padding: 25px;
+        margin-top: 30px;
+    }
+
+    .hour-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #555;
+    }
+
+    .hour-item.active {
+        color: var(--tet-red);
+        font-weight: 700;
+    }
+
+    .badge-online {
+        background: #27ae60;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 5px;
+        animation: pulse-green 2s infinite;
+    }
+
+    @keyframes pulse-green {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(39, 174, 96, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(39, 174, 96, 0); }
     }
 </style>
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="contact-card">
-                <div class="row g-0">
-                    <div class="col-md-5">
-                        <div class="contact-info-side">
-                            <h3 class="fw-bold mb-4">Thông Tin Liên Hệ</h3>
-                            <p class="mb-5 opacity-75">Hãy để lại lời nhắn cho chúng tôi, đội ngũ GrowTech sẽ phản hồi bạn trong vòng 24h làm việc.</p>
-                            
-                            <div class="info-item">
-                                <i class="fas fa-map-marker-alt"></i>
-                                <div>
-                                    <div class="fw-bold">Địa chỉ</div>
-                                    <div class="opacity-75">123 Đường ABC, Quận 1, TP. Hồ Chí Minh</div>
-                                </div>
-                            </div>
-                            
-                            <div class="info-item">
-                                <i class="fas fa-phone-alt"></i>
-                                <div>
-                                    <div class="fw-bold">Điện thoại</div>
-                                    <div class="opacity-75">1900 1234 (8:00 - 21:00)</div>
-                                </div>
-                            </div>
-                            
-                            <div class="info-item">
-                                <i class="fas fa-envelope"></i>
-                                <div>
-                                    <div class="fw-bold">Email</div>
-                                    <div class="opacity-75">support@growtech.vn</div>
-                                </div>
-                            </div>
-                            
-                            <div class="mt-5 pt-4">
-                                <h6 class="fw-bold mb-3">Theo dõi chúng tôi</h6>
-                                <div class="social-links">
-                                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                                    <a href="#"><i class="fab fa-instagram"></i></a>
-                                    <a href="#"><i class="fab fa-youtube"></i></a>
-                                    <a href="#"><i class="fab fa-tiktok"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-7">
-                        <div class="contact-form-side">
-                            <h3 class="fw-bold mb-4 text-dark">Gửi Lời Nhắn</h3>
-                            
-                            <?php if ($success): ?>
-                                <div class="alert alert-success border-0 rounded-3 mb-4">
-                                    <i class="fas fa-check-circle me-2"></i>
-                                    Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm nhất có thể.
-                                </div>
-                            <?php endif; ?>
+<!-- Hero Section -->
+<section class="contact-hero">
+    <div class="container">
+        <h1 class="display-3 fw-black mb-3">Kết Nối Với GrowTech</h1>
+        <p class="lead opacity-75">Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn 24/7</p>
+    </div>
+</section>
 
-                            <form action="" method="POST">
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label small fw-bold">Họ và tên</label>
-                                        <input type="text" class="form-control" placeholder="Nguyễn Văn A" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label class="form-label small fw-bold">Email</label>
-                                        <input type="email" class="form-control" placeholder="example@gmail.com" required>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label small fw-bold">Chủ đề</label>
-                                    <select class="form-select">
-                                        <option value="1">Tư vấn mua hàng</option>
-                                        <option value="2">Hỗ trợ kỹ thuật</option>
-                                        <option value="3">Khiếu nại dịch vụ</option>
-                                        <option value="4">Khác</option>
-                                    </select>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label small fw-bold">Nội dung</label>
-                                    <textarea class="form-control" rows="5" placeholder="Bạn cần chúng tôi giúp gì?" required></textarea>
-                                </div>
-                                <button type="submit" class="btn-send w-100">Gửi Tin Nhắn Ngay</button>
-                            </form>
-                        </div>
-                    </div>
+<!-- Method Cards -->
+<section class="contact-methods">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="method-card">
+                    <div class="method-icon"><i class="bi bi-geo-alt"></i></div>
+                    <h3>Địa Chỉ</h3>
+                    <p class="text-muted">123 Nguyễn Thiện Thành, Phường Hòa Thuận, tỉnh Vĩnh Long</p>
+                    <a href="#map" class="text-danger fw-bold text-decoration-none">Tìm đường đi <i class="bi bi-arrow-right"></i></a>
                 </div>
             </div>
-            
-            <div class="mt-5">
-                <div class="rounded-4 overflow-hidden shadow-sm">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.424129007858!2d106.69823431474898!3d10.7756586923221!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f385570472f%3A0x118ad941f1d660b7!2zRGluaCDEkOG7mWMgTOG6rXA!5e0!3m2!1svi!2s!4v1625560000000!5m2!1svi!2s" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            <div class="col-md-4">
+                <div class="method-card">
+                    <div class="method-icon"><i class="bi bi-telephone-inbound"></i></div>
+                    <h3>Hotline</h3>
+                    <p class="text-muted">Hỗ trợ kỹ thuật & Mua hàng nhanh chóng</p>
+                    <h4 class="text-danger fw-black">1900 1234</h4>
+                    <span class="small text-success fw-bold"><span class="badge-online"></span> Đang trực tuyến</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="method-card">
+                    <div class="method-icon"><i class="bi bi-chat-dots"></i></div>
+                    <h3>Hỗ Trợ Trực Tuyến</h3>
+                    <p class="text-muted">Chat với đội ngũ hỗ trợ qua Zalo hoặc growtech@gmail.com</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="#" class="btn btn-outline-primary btn-sm rounded-pill px-3">Zalo</a>
+                        <a href="mailto:growtech@gmail.com" class="btn btn-outline-danger btn-sm rounded-pill px-3">Email</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<!-- Main Contact Section -->
+<section class="contact-main-section">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Contact Form -->
+            <div class="col-lg-6">
+                <div class="form-container">
+                    <div class="mb-4">
+                        <h2 class="fw-black mb-2">Gửi Tin Nhắn</h2>
+                        <p class="text-muted">Nếu bạn có thắc mắc gì, đừng ngần ngại để lại lời nhắn.</p>
+                    </div>
+
+                    <?php if ($success): ?>
+                        <div class="alert alert-success border-0 rounded-4 p-4 mb-4">
+                            <div class="d-flex">
+                                <i class="bi bi-check-circle-fill fs-3 me-3"></i>
+                                <div>
+                                    <h5 class="alert-heading fw-bold">Gửi tin nhắn thành công!</h5>
+                                    <p class="mb-0">GrowTech sẽ phản hồi cho bạn qua Email sớm nhất có thể.</p>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                    <form action="contact.php" method="POST">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="name" name="name" placeholder="Họ tên" required>
+                                    <label for="name">Họ và tên</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                                    <label for="email">Địa chỉ Email</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="subject" name="subject" placeholder="Chủ đề">
+                                    <label for="subject">Chủ đề (Nội dung cần hỗ trợ)</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating mb-4">
+                                    <textarea class="form-control" placeholder="Để lại lời nhắn" id="message" name="message" style="height: 150px" required></textarea>
+                                    <label for="message">Nội dung chi tiết</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn-submit">
+                                    Gửi Yêu Cầu <i class="bi bi-send-fill ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="business-hours shadow-sm">
+                        <h5 class="fw-bold mb-3"><i class="bi bi-clock-history me-2 text-danger"></i> Giờ làm việc</h5>
+                        <div class="hour-item active">
+                            <span>Thứ 2 - Thứ 6:</span>
+                            <span>08:00 - 21:00</span>
+                        </div>
+                        <div class="hour-item">
+                            <span>Thứ 7 - CN:</span>
+                            <span>08:30 - 20:00</span>
+                        </div>
+                        <div class="hour-item text-danger fw-bold small mt-2">
+                            <span>* Nghỉ lễ Tết theo quy định</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map Area -->
+            <div class="col-lg-6" id="map">
+                <div class="map-container">
+                    <iframe 
+                        src="https://www.google.com/maps?q=123%20Nguy%E1%BB%85n%20Thi%E1%BB%87n%20Th%C3%A0nh%2C%20H%C3%B2a%20Thu%E1%BA%ADn%2C%20V%C3%A9nh%20Long&output=embed" 
+                        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
+
 

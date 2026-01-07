@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/functions.php';
 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $limit = 10;
@@ -10,6 +10,7 @@ $stmt = $pdo->prepare("
     FROM products p 
     LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.position = 0 
     WHERE p.is_active = 1 
+    GROUP BY p.id
     ORDER BY p.created_at DESC 
     LIMIT ? OFFSET ?
 ");
@@ -22,10 +23,7 @@ if (empty($products)) {
 }
 
 foreach ($products as $p):
-    $img = $p["image_url"];
-    if (!$img || (strpos($img, 'http') !== 0 && strpos($img, '/') !== 0)) {
-        $img = 'https://placehold.co/600x400?text=No+Image';
-    }
+    $img = getProductImage($p['id']);
 ?>
     <div class="suggestion-item">
         <a href="product.php?id=<?php echo $p["id"]; ?>" class="text-decoration-none">

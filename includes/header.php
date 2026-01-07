@@ -22,6 +22,7 @@ $menu_categories = $stmt_menu_cats->fetchAll();
   <title>GrowTech - Chuẩn công nghệ – vững niềm tin</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <link href="/weblaptop/assets/css/style.css" rel="stylesheet">
   <style>
     body { margin: 0 !important; padding: 0 !important; }
@@ -107,6 +108,10 @@ $menu_categories = $stmt_menu_cats->fetchAll();
       border: 2px solid var(--tet-red);
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
       line-height: 1;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .cart-badge.bump {
+      transform: scale(1.5);
     }
 
     /* Cart Dropdown */
@@ -731,7 +736,7 @@ $menu_categories = $stmt_menu_cats->fetchAll();
               <?php 
               $cart_ids = array_keys($_SESSION["cart"]);
               $placeholders = implode(',', array_fill(0, count($cart_ids), '?'));
-              $stmt_cart = $pdo->prepare("SELECT p.*, pi.url as image_url FROM products p LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.position = 0 WHERE p.id IN ($placeholders)");
+              $stmt_cart = $pdo->prepare("SELECT p.*, pi.url as image_url FROM products p LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.position = 0 WHERE p.id IN ($placeholders) GROUP BY p.id");
               $stmt_cart->execute($cart_ids);
               $cart_items = $stmt_cart->fetchAll();
               foreach ($cart_items as $item):

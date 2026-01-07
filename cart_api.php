@@ -143,10 +143,53 @@ if ($action === 'update') {
     }
 
     $_SESSION['cart'][$id] = $new_qty;
+
+    // Get dropdown HTML for instant update
+    $dropdown_html = '';
+    if (!empty($_SESSION["cart"])) {
+        $cart_ids = array_keys($_SESSION["cart"]);
+        $placeholders = implode(',', array_fill(0, count($cart_ids), '?'));
+        $stmt_cart = $pdo->prepare("SELECT p.*, pi.url as image_url FROM products p LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.position = 0 WHERE p.id IN ($placeholders) GROUP BY p.id");
+        $stmt_cart->execute($cart_ids);
+        $cart_items = $stmt_cart->fetchAll();
+        
+        $items_html = '';
+        foreach ($cart_items as $item) {
+            $img = $item["image_url"] ?: 'https://placehold.co/45x45?text=No+Image';
+            $p_price = number_format($item['price'], 0, ',', '.') . ' đ';
+            $p_qty = $_SESSION["cart"][$item['id']];
+            $p_url = "/weblaptop/product.php?id=" . $item['id'];
+            $p_name = htmlspecialchars($item['name']);
+            
+            $items_html .= "
+                <a href=\"$p_url\" class=\"cart-dropdown-item\">
+                  <img src=\"$img\" alt=\"\">
+                  <div class=\"cart-dropdown-info\">
+                    <div class=\"cart-dropdown-name\">$p_name</div>
+                    <div class=\"cart-dropdown-price\">$p_price</div>
+                  </div>
+                  <div class=\"small text-muted ms-2\">x$p_qty</div>
+                </a>";
+        }
+        
+        $cart_count_text = count($_SESSION['cart']) . " sản phẩm mới thêm";
+        $dropdown_html = "
+            <div class=\"cart-dropdown-header\">Sản phẩm mới thêm</div>
+            <div class=\"cart-dropdown-body\">
+                $items_html
+                <div class=\"dropdown-divider m-0\"></div>
+                <div class=\"p-2 text-center\" style=\"background: #f9f9f9;\">
+                    <div class=\"small mb-2\" style=\"color: #000;\">$cart_count_text</div>
+                    <a href=\"/weblaptop/cart.php\" class=\"btn btn-danger w-100 py-2\" style=\"background-color: var(--tet-red); border: none; font-weight: 600; border-radius: 2px;\">Xem Giỏ Hàng</a>
+                </div>
+            </div>";
+    }
+
     echo json_encode([
         'success' => true,
         'message' => 'Đã thêm vào giỏ hàng thành công!',
-        'cart_count' => array_sum($_SESSION['cart'])
+        'cart_count' => array_sum($_SESSION['cart']),
+        'dropdown_html' => $dropdown_html
     ]);
 } else {
     echo json_encode(['success' => false, 'message' => 'Invalid action']);
