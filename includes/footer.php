@@ -42,9 +42,9 @@
       <div class="col-lg-3 col-md-6">
         <h6 class="footer-title">LIÊN HỆ</h6>
         <div class="contact-info text-light small">
-          <p class="mb-2"><i class="bi bi-geo-alt-fill me-2 text-warning"></i> 123 Nguyễn Thiện Thành, Phường Hòa Thuận, tỉnh Vĩnh Long</p>
-          <p class="mb-2"><i class="bi bi-telephone-fill me-2 text-warning"></i> Hotline: 1900 1234 (8:00 - 22:00)</p>
-          <p class="mb-2"><i class="bi bi-envelope-fill me-2 text-warning"></i> Email: growtech@gmail.com</p>
+          <p class="mb-2"><i class="bi bi-geo-alt-fill me-2" style="color: var(--tet-gold);"></i> 123 Nguyễn Thiện Thành, Phường Hòa Thuận, tỉnh Vĩnh Long</p>
+          <p class="mb-2"><i class="bi bi-telephone-fill me-2" style="color: var(--tet-gold);"></i> Hotline: 1900 1234 (8:00 - 22:00)</p>
+          <p class="mb-2"><i class="bi bi-envelope-fill me-2" style="color: var(--tet-gold);"></i> Email: growtech@gmail.com</p>
           <div class="mt-4">
             <h6 class="footer-title fs-7 mb-3" style="font-size: 13px;">CHẤP NHẬN THANH TOÁN</h6>
             <div class="d-flex flex-wrap gap-2 payment-methods">

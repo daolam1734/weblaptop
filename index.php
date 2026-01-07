@@ -46,7 +46,7 @@ if ($is_filtered) {
         $params[] = (float)$max_price;
     }
 
-    $sql .= " ORDER BY p.created_at DESC";
+    $sql .= " GROUP BY p.id ORDER BY p.created_at DESC";
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
     $products = $stmt->fetchAll();
@@ -437,12 +437,9 @@ if ($is_filtered) {
                     <div class="scroll-btn scroll-btn-right"><i class="bi bi-chevron-right"></i></div>
                     <div class="scroll-container">
                         <?php
-                        $stmt_feat = $pdo->query("SELECT p.*, pi.url as image_url FROM products p LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.position = 0 WHERE p.is_active = 1 ORDER BY p.created_at DESC LIMIT 20");
+                        $stmt_feat = $pdo->query("SELECT p.id, p.name, p.price FROM products p WHERE p.is_active = 1 GROUP BY p.id ORDER BY p.created_at DESC LIMIT 20");
                         while ($p = $stmt_feat->fetch()):
-                            $img = $p["image_url"];
-                            if (!$img || (strpos($img, 'http') !== 0 && strpos($img, '/') !== 0)) {
-                                $img = 'https://placehold.co/600x400?text=No+Image';
-                            }
+                            $img = getProductImage($p['id']);
                         ?>
                             <div class="scroll-item">
                                 <a href="product.php?id=<?php echo $p["id"]; ?>" class="text-decoration-none">
@@ -478,13 +475,10 @@ if ($is_filtered) {
                         <div class="scroll-btn scroll-btn-right"><i class="bi bi-chevron-right"></i></div>
                         <div class="scroll-container">
                             <?php
-                            $stmt_cat_p = $pdo->prepare("SELECT p.*, pi.url as image_url FROM products p LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.position = 0 WHERE p.category_id = ? AND p.is_active = 1 LIMIT 15");
+                            $stmt_cat_p = $pdo->prepare("SELECT p.id, p.name, p.price FROM products p WHERE p.category_id = ? AND p.is_active = 1 GROUP BY p.id LIMIT 15");
                             $stmt_cat_p->execute([$cat["id"]]);
                             while ($p = $stmt_cat_p->fetch()):
-                                $img = $p["image_url"];
-                                if (!$img || (strpos($img, 'http') !== 0 && strpos($img, '/') !== 0)) {
-                                    $img = 'https://placehold.co/600x400?text=No+Image';
-                                }
+                                $img = getProductImage($p['id']);
                             ?>
                                 <div class="scroll-item">
                                     <a href="product.php?id=<?php echo $p["id"]; ?>" class="text-decoration-none">
@@ -516,7 +510,7 @@ if ($is_filtered) {
                     <div class="scroll-container" id="suggestion-container">
                         <?php
                         // Initial load of 30 products for the scroll
-                        $stmt_sug = $pdo->query("SELECT p.*, pi.url as image_url FROM products p LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.position = 0 WHERE p.is_active = 1 ORDER BY p.created_at DESC LIMIT 30");
+                        $stmt_sug = $pdo->query("SELECT p.*, pi.url as image_url FROM products p LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.position = 0 WHERE p.is_active = 1 GROUP BY p.id ORDER BY p.created_at DESC LIMIT 30");
                         while ($p = $stmt_sug->fetch()):
                             $img = $p["image_url"];
                             if (!$img || (strpos($img, 'http') !== 0 && strpos($img, '/') !== 0)) {
