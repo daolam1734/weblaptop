@@ -16,7 +16,7 @@ $query = "
         u.phone, 
         u.created_at,
         COUNT(o.id) as total_orders,
-        SUM(CASE WHEN o.order_status NOT IN ('huy', 'tra_lai') THEN o.total ELSE 0 END) as total_spent
+        SUM(CASE WHEN o.order_status NOT IN ('CANCELLED', 'RETURNED') THEN o.total ELSE 0 END) as total_spent
     FROM users u
     LEFT JOIN orders o ON u.id = o.user_id
     WHERE u.role = 'user'

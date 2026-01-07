@@ -144,7 +144,7 @@ require_once __DIR__ . '/includes/header.php';
                     <div class="stat-label">Doanh thu tháng này</div>
                     <div class="stat-value">
                         <?php 
-                        $monthly_rev = $pdo->query("SELECT SUM(total) FROM orders WHERE MONTH(created_at) = MONTH(CURDATE()) AND order_status NOT IN ('huy', 'tra_lai')")->fetchColumn();
+                        $monthly_rev = $pdo->query("SELECT SUM(total) FROM orders WHERE MONTH(created_at) = MONTH(CURDATE()) AND order_status NOT IN ('CANCELLED', 'RETURNED')")->fetchColumn();
                         echo number_format($monthly_rev ?: 0, 0, ',', '.'); 
                         ?>đ
                     </div>
@@ -178,7 +178,7 @@ require_once __DIR__ . '/includes/header.php';
                     <div class="stat-value">
                         <?php 
                         $total = $pdo->query("SELECT COUNT(*) FROM orders")->fetchColumn();
-                        $cancelled = $pdo->query("SELECT COUNT(*) FROM orders WHERE order_status = 'huy'")->fetchColumn();
+                        $cancelled = $pdo->query("SELECT COUNT(*) FROM orders WHERE order_status = 'CANCELLED'")->fetchColumn();
                         echo $total > 0 ? round(($cancelled / $total) * 100, 1) : 0;
                         ?>%
                     </div>
