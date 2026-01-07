@@ -51,6 +51,82 @@ $vouchers = $pdo->query("SELECT * FROM vouchers ORDER BY created_at DESC")->fetc
 require_once __DIR__ . '/includes/header.php';
 ?>
 
+<style>
+    :root {
+        --primary-dark: #1e293b;
+        --accent-blue: #3b82f6;
+        --text-main: #334155;
+        --text-light: #64748b;
+        --bg-light: #f8fafc;
+    }
+
+    .card-modern {
+        border-radius: 1.25rem;
+        border: 1px solid rgba(0,0,0,0.05);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        overflow: hidden;
+    }
+
+    .table-modern thead th { 
+        background: var(--bg-light); 
+        border-bottom: 2px solid #f1f5f9; 
+        font-size: 0.75rem; 
+        text-transform: uppercase; 
+        letter-spacing: 0.05em; 
+        color: var(--text-light); 
+        padding: 1rem 1.5rem; 
+    }
+    .table-modern tbody td { 
+        padding: 1.25rem 1.5rem; 
+        vertical-align: middle; 
+        font-size: 0.9rem; 
+        border-bottom: 1px solid #f1f5f9; 
+        color: var(--text-main);
+    }
+    
+    .voucher-tag {
+        background: #fdf2f2;
+        border: 1px dashed #ef4444;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        color: #ef4444;
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: 800;
+        display: inline-block;
+        letter-spacing: 1px;
+    }
+
+    .status-badge { 
+        padding: 0.4rem 0.8rem; 
+        border-radius: 9999px; 
+        font-size: 0.75rem; 
+        font-weight: 700; 
+        border: 1px solid transparent;
+    }
+    .status-running { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+    .status-ended { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+    .status-paused { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+
+    .btn-action { 
+        width: 38px; 
+        height: 38px; 
+        display: inline-flex; 
+        align-items: center; 
+        justify-content: center; 
+        border-radius: 12px; 
+        background: #fff;
+        color: var(--text-main);
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s; 
+    }
+    .btn-action:hover { 
+        background: var(--bg-light);
+        color: var(--accent-blue);
+        border-color: var(--accent-blue);
+        transform: translateY(-2px);
+    }
+</style>
+
 <div class="admin-wrapper">
     <?php require_once __DIR__ . '/includes/sidebar.php'; ?>
     
@@ -71,11 +147,11 @@ require_once __DIR__ . '/includes/header.php';
             </button>
         </div>
 
-        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
-            <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold"><i class="bi bi-ticket-perforated me-2 text-primary"></i>Danh sách mã giảm giá</h6>
+        <div class="card card-modern border-0 mb-4">
+            <div class="card-header bg-white py-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 fw-bold text-dark"><i class="bi bi-ticket-perforated me-2 text-primary"></i>Danh sách mã giảm giá</h6>
                 <div class="d-flex gap-2">
-                    <select class="form-select form-select-sm border bg-light rounded-pill px-3" style="width: 160px;">
+                    <select class="form-select form-select-sm border-0 bg-light rounded-pill px-3 shadow-none" style="width: 160px;">
                         <option>Tất cả trạng thái</option>
                         <option>Đang hoạt động</option>
                         <option>Đã kết thúc</option>
@@ -88,7 +164,7 @@ require_once __DIR__ . '/includes/header.php';
                         <tr>
                             <th class="ps-4">Mã Voucher</th>
                             <th>Chi tiết giảm giá</th>
-                            <th>Đơn hàng</th>
+                            <th>Điều kiện đơn</th>
                             <th>Thời hạn & Lượt dùng</th>
                             <th class="text-center">Trạng thái</th>
                             <th class="text-end pe-4">Thao tác</th>
@@ -99,62 +175,62 @@ require_once __DIR__ . '/includes/header.php';
                         <tr>
                             <td class="ps-4">
                                 <div class="voucher-tag">
-                                    <div class="code"><?php echo htmlspecialchars($v['code']); ?></div>
+                                    <?php echo htmlspecialchars($v['code']); ?>
                                 </div>
                             </td>
                             <td>
-                                <div class="fw-bold text-primary">
+                                <div class="fw-bold text-primary mb-1">
                                     <?php 
                                     if ($v['discount_type'] === 'percentage') {
                                         echo 'Giảm ' . (int)$v['discount_value'] . '%';
-                                        if ($v['max_discount']) echo '<div class="text-muted small fw-normal">Tối đa ' . number_format($v['max_discount'], 0, ',', '.') . 'đ</div>';
+                                        if ($v['max_discount']) echo '<div class="text-muted x-small fw-normal">Tối đa ' . number_format($v['max_discount']) . '₫</div>';
                                     } else {
-                                        echo 'Giảm ' . number_format($v['discount_value'], 0, ',', '.') . 'đ';
+                                        echo 'Giảm ' . number_format($v['discount_value']) . '₫';
                                     }
                                     ?>
                                 </div>
-                                <div class="small text-muted">
+                                <div class="x-small text-muted text-uppercase fw-bold" style="letter-spacing: 0.05em;">
                                     <?php 
-                                    if ($v['discount_type'] === 'percentage') echo 'Theo phần trăm';
-                                    elseif ($v['discount_type'] === 'fixed') echo 'Số tiền cố định';
-                                    else echo 'Giảm phí vận chuyển';
+                                    if ($v['discount_type'] === 'percentage') echo 'Phần trăm';
+                                    elseif ($v['discount_type'] === 'fixed') echo 'Cố định';
+                                    else echo 'Vận chuyển';
                                     ?>
                                 </div>
                             </td>
                             <td>
-                                <div class="small fw-bold">Tối thiểu: <?php echo number_format($v['min_spend'], 0, ',', '.'); ?>đ</div>
-                                <div class="progress mt-1" style="height: 4px; width: 80px;">
-                                    <div class="progress-bar bg-info" style="width: 100%"></div>
+                                <div class="small fw-bold text-dark mb-1">Min: <?php echo number_format($v['min_spend']); ?>₫</div>
+                                <div class="progress rounded-pill shadow-none" style="height: 6px; width: 100px; background: #f1f5f9;">
+                                    <div class="progress-bar bg-primary rounded-pill" style="width: <?php echo min(100, ($v['usage_count'] / ($v['usage_limit'] ?: 1)) * 100); ?>%"></div>
                                 </div>
                             </td>
                             <td>
                                 <div class="small mb-1">
                                     <span class="text-muted">Hạn:</span> 
-                                    <span class="fw-bold"><?php echo date('d/m/Y', strtotime($v['end_date'])); ?></span>
+                                    <span class="fw-bold text-dark"><?php echo date('d/m/Y', strtotime($v['end_date'])); ?></span>
                                 </div>
-                                <div class="small text-muted">
-                                    Đã dùng: <span class="text-dark fw-bold"><?php echo $v['usage_count'] ?? 0; ?></span> / <?php echo $v['usage_limit'] ?: '∞'; ?>
+                                <div class="x-small text-muted">
+                                    Sử dụng: <span class="text-primary fw-bold"><?php echo $v['usage_count'] ?? 0; ?></span> / <?php echo $v['usage_limit'] ?: '∞'; ?>
                                 </div>
                             </td>
                             <td class="text-center">
                                 <?php if ($v['is_active'] && strtotime($v['end_date']) >= time()): ?>
-                                    <span class="badge bg-soft-success text-success rounded-pill px-3 border border-success">Đang chạy</span>
+                                    <span class="status-badge status-running">Đang chạy</span>
                                 <?php elseif (!$v['is_active']): ?>
-                                    <span class="badge bg-soft-secondary text-secondary rounded-pill px-3 border border-secondary">Tạm dừng</span>
+                                    <span class="status-badge status-paused">Tạm dừng</span>
                                 <?php else: ?>
-                                    <span class="badge bg-soft-danger text-danger rounded-pill px-3 border border-danger">Hết hạn</span>
+                                    <span class="status-badge status-ended">Hết hạn</span>
                                 <?php endif; ?>
                             </td>
                             <td class="text-end pe-4">
                                 <div class="d-flex justify-content-end gap-2">
-                                    <button class="btn btn-sm btn-light border rounded-pill px-3" onclick='editVoucher(<?php echo json_encode($v); ?>)'>
-                                        <i class="bi bi-pencil"></i>
+                                    <button class="btn-action" onclick='editVoucher(<?php echo json_encode($v); ?>)' title="Chỉnh sửa">
+                                        <i class="bi bi-pencil-square"></i>
                                     </button>
                                     <form method="POST" class="d-inline" onsubmit="return confirm('Xác nhận xóa voucher này?')">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<?php echo $v['id']; ?>">
-                                        <button type="submit" class="btn btn-sm btn-soft-danger rounded-pill px-3">
-                                            <i class="bi bi-trash"></i>
+                                        <button type="submit" class="btn-action btn-delete" title="Xóa">
+                                            <i class="bi bi-trash3"></i>
                                         </button>
                                     </form>
                                 </div>
@@ -176,41 +252,7 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 </div>
 
-<style>
-.voucher-tag {
-    display: inline-flex;
-    background: #fff;
-    border: 1px dashed var(--accent-color);
-    border-radius: 4px;
-    padding: 4px 12px;
-    position: relative;
-    margin: 5px 0;
-}
-.voucher-tag::before, .voucher-tag::after {
-    content: '';
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 50%;
-    top: 50%;
-    transform: translateY(-50%);
-}
-.voucher-tag::before { left: -5px; clip-path: circle(50% at 100% 50%); }
-.voucher-tag::after { right: -5px; clip-path: circle(50% at 0 50%); }
-.voucher-tag .code {
-    font-family: 'Monaco', 'Consolas', monospace;
-    font-weight: 700;
-    color: var(--accent-color);
-    letter-spacing: 1px;
-}
-.bg-soft-success { background-color: rgba(25, 135, 84, 0.1); }
-.bg-soft-secondary { background-color: rgba(108, 117, 125, 0.1); }
-.bg-soft-danger { background-color: rgba(220, 53, 69, 0.1); }
-.btn-soft-danger { color: #dc3545; background-color: rgba(220, 53, 69, 0.1); border-color: transparent; }
-.btn-soft-danger:hover { background-color: #dc3545; color: #fff; }
-</style>
+
 
 <!-- Voucher Modal -->
 <div class="modal fade" id="voucherModal" tabindex="-1">

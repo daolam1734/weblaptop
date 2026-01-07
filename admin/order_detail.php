@@ -66,13 +66,13 @@ require_once __DIR__ . '/includes/header.php';
         background: currentColor;
     }
 
-    .status-dang_cho { background: #fef3c7; color: #92400e; }
-    .status-da_xac_nhan { background: #e0f2fe; color: #075985; }
-    .status-dang_xu_ly { background: #f3e8ff; color: #6b21a8; }
-    .status-da_gui { background: #e0e7ff; color: #3730a3; }
-    .status-da_giao { background: #dcfce7; color: #166534; }
-    .status-hoan_thanh { background: #dcfce7; color: #166534; }
-    .status-huy { background: #fee2e2; color: #991b1b; }
+    .status-PENDING { background: #fef3c7; color: #92400e; }
+    .status-CONFIRMED { background: #e0f2fe; color: #075985; }
+    .status-PROCESSING { background: #f3e8ff; color: #6b21a8; }
+    .status-SHIPPING { background: #e0e7ff; color: #3730a3; }
+    .status-DELIVERED { background: #dcfce7; color: #166534; }
+    .status-COMPLETED { background: #dcfce7; color: #166534; }
+    .status-CANCELLED { background: #fee2e2; color: #991b1b; }
 
     .card-modern {
         border: 1px solid rgba(0,0,0,0.05);
@@ -116,13 +116,13 @@ require_once __DIR__ . '/includes/header.php';
                     <span class="status-badge status-<?php echo $order['order_status']; ?>">
                         <?php 
                         $status_map = [
-                            'dang_cho' => 'Chờ xác nhận',
-                            'da_xac_nhan' => 'Đã xác nhận',
-                            'dang_xu_ly' => 'Đang xử lý',
-                            'da_gui' => 'Đang giao hàng',
-                            'da_giao' => 'Đã giao hàng',
-                            'hoan_thanh' => 'Hoàn thành',
-                            'huy' => 'Đã hủy'
+                            'PENDING' => 'Chờ xác nhận',
+                            'CONFIRMED' => 'Đã xác nhận',
+                            'PROCESSING' => 'Đang xử lý',
+                            'SHIPPING' => 'Đang giao hàng',
+                            'DELIVERED' => 'Đã giao hàng',
+                            'COMPLETED' => 'Hoàn thành',
+                            'CANCELLED' => 'Đã hủy'
                         ];
                         echo $status_map[$order['order_status']] ?? $order['order_status'];
                         ?>
@@ -132,9 +132,9 @@ require_once __DIR__ . '/includes/header.php';
                     <button class="btn btn-white border border-secondary border-opacity-10 shadow-sm btn-sm px-4 rounded-pill fw-bold">
                         <i class="bi bi-printer me-2"></i> In Hóa Đơn
                     </button>
-                    <?php if ($order['order_status'] === 'da_xac_nhan'): ?>
+                    <?php if ($order['order_status'] === 'CONFIRMED'): ?>
                     <button class="btn btn-primary shadow-sm btn-sm px-4 rounded-pill fw-bold">
-                        <i class="bi bi-truck me-2"></i> Bắt Đầu Giao
+                        <i class="bi bi-truck me-2"></i> Bắt Đầu Đóng Gói
                     </button>
                     <?php endif; ?>
                 </div>
@@ -230,7 +230,7 @@ require_once __DIR__ . '/includes/header.php';
                                     <div class="text-muted" style="font-size: 0.8rem;">Đơn hàng đã được ghi nhận vào hệ thống.</div>
                                 </div>
                             </div>
-                            <?php if($order['order_status'] != 'dang_cho'): ?>
+                            <?php if($order['order_status'] != 'PENDING'): ?>
                             <div class="timeline-item active">
                                 <div class="timeline-dot"></div>
                                 <div class="timeline-content">
@@ -238,7 +238,19 @@ require_once __DIR__ . '/includes/header.php';
                                         <div class="small fw-bold text-dark">Đã được xác nhận</div>
                                         <div class="text-muted" style="font-size: 0.75rem;"><i class="bi bi-calendar-check me-1"></i><?php echo date('H:i, d/m/Y', strtotime($order['updated_at'])); ?></div>
                                     </div>
-                                    <div class="text-muted" style="font-size: 0.8rem;">Nhân viên kho đã kiểm tra và chuẩn bị hàng.</div>
+                                    <div class="text-muted" style="font-size: 0.8rem;">Nhân viên CSKH đã xác nhận đơn hàng.</div>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+                            <?php if(in_array($order['order_status'], ['SHIPPING', 'DELIVERED', 'COMPLETED'])): ?>
+                            <div class="timeline-item active">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <div class="small fw-bold text-dark">Đang giao hàng</div>
+                                        <div class="text-muted" style="font-size: 0.75rem;"><i class="bi bi-truck me-1"></i><?php echo date('H:i, d/m/Y', strtotime($order['updated_at'])); ?></div>
+                                    </div>
+                                    <div class="text-muted" style="font-size: 0.8rem;">Đơn hàng đang trên đường đến với bạn.</div>
                                 </div>
                             </div>
                             <?php endif; ?>
@@ -285,6 +297,34 @@ require_once __DIR__ . '/includes/header.php';
                         </div>
                         <?php endif; ?>
 
+                        <div class="mb-4">
+                            <label class="text-muted text-uppercase fw-bold mb-2 d-block" style="font-size: 0.7rem; letter-spacing: 0.05em;">Trạng thái chi tiết</label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <div class="p-2 bg-light rounded-3 border border-secondary border-opacity-10 text-center">
+                                        <div class="small text-muted mb-1" style="font-size: 0.65rem;">Thanh toán</div>
+                                        <span class="badge <?php 
+                                            echo $order['payment_status'] === 'PAID' ? 'bg-success' : 
+                                                ($order['payment_status'] === 'REFUNDED' ? 'bg-info' : 'bg-warning text-dark'); 
+                                        ?> font-monospace" style="font-size: 0.6rem;">
+                                            <?php echo $order['payment_status']; ?>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-2 bg-light rounded-3 border border-secondary border-opacity-10 text-center">
+                                        <div class="small text-muted mb-1" style="font-size: 0.65rem;">Vận chuyển</div>
+                                        <span class="badge <?php 
+                                            echo $order['shipping_status'] === 'DELIVERED' ? 'bg-success' : 
+                                                ($order['shipping_status'] === 'SHIPPING' ? 'bg-primary' : 'bg-secondary'); 
+                                        ?> font-monospace" style="font-size: 0.6rem;">
+                                            <?php echo $order['shipping_status']; ?>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div>
                             <label class="text-muted text-uppercase fw-bold mb-2 d-block" style="font-size: 0.7rem; letter-spacing: 0.05em;">Phương thức thanh toán</label>
                             <div class="d-flex align-items-center p-2 rounded-3 bg-light border border-secondary border-opacity-10">
@@ -292,7 +332,16 @@ require_once __DIR__ . '/includes/header.php';
                                     <i class="bi bi-wallet2"></i>
                                 </div>
                                 <div class="small fw-bold text-dark">
-                                    <?php echo $order['payment_method'] === 'cod' ? 'Thanh toán khi nhận hàng (COD)' : 'Thanh toán trực tuyến (VNPAY)'; ?>
+                                    <?php 
+                                        $pm_map = [
+                                            'tien_mat' => 'Thanh toán tiền mặt (COD)',
+                                            'chuyen_khoan' => 'Chuyển khoản ngân hàng',
+                                            'vi_dien_tu' => 'Ví điện tử (Momo/ZaloPay)',
+                                            'cod' => 'Thanh toán tiền mặt (COD)',
+                                            'vnpay' => 'VNPAY Online'
+                                        ];
+                                        echo $pm_map[$order['payment_method']] ?? $order['payment_method']; 
+                                    ?>
                                 </div>
                             </div>
                         </div>
@@ -310,13 +359,13 @@ require_once __DIR__ . '/includes/header.php';
                             <div class="mb-3">
                                 <label class="form-label small fw-bold text-dark">Trạng thái mới</label>
                                 <select name="status" class="form-select border-0 shadow-sm rounded-3">
-                                    <option value="dang_cho" <?php echo $order['order_status'] == 'dang_cho' ? 'selected' : ''; ?>>Chờ xác nhận</option>
-                                    <option value="da_xac_nhan" <?php echo $order['order_status'] == 'da_xac_nhan' ? 'selected' : ''; ?>>Đã xác nhận</option>
-                                    <option value="dang_xu_ly" <?php echo $order['order_status'] == 'dang_xu_ly' ? 'selected' : ''; ?>>Đang xử lý</option>
-                                    <option value="da_gui" <?php echo $order['order_status'] == 'da_gui' ? 'selected' : ''; ?>>Đang giao hàng</option>
-                                    <option value="da_giao" <?php echo $order['order_status'] == 'da_giao' ? 'selected' : ''; ?>>Đã giao hàng</option>
-                                    <option value="hoan_thanh" <?php echo $order['order_status'] == 'hoan_thanh' ? 'selected' : ''; ?>>Hoàn thành</option>
-                                    <option value="huy" <?php echo $order['order_status'] == 'huy' ? 'selected' : ''; ?>>Hủy đơn hàng</option>
+                                    <option value="PENDING" <?php echo $order['order_status'] == 'PENDING' ? 'selected' : ''; ?>>Chờ xác nhận</option>
+                                    <option value="CONFIRMED" <?php echo $order['order_status'] == 'CONFIRMED' ? 'selected' : ''; ?>>Đã xác nhận</option>
+                                    <option value="PROCESSING" <?php echo $order['order_status'] == 'PROCESSING' ? 'selected' : ''; ?>>Đang xử lý</option>
+                                    <option value="SHIPPING" <?php echo $order['order_status'] == 'SHIPPING' ? 'selected' : ''; ?>>Đang giao hàng</option>
+                                    <option value="DELIVERED" <?php echo $order['order_status'] == 'DELIVERED' ? 'selected' : ''; ?>>Giao hàng thành công</option>
+                                    <option value="COMPLETED" <?php echo $order['order_status'] == 'COMPLETED' ? 'selected' : ''; ?>>Hoàn tất</option>
+                                    <option value="CANCELLED" <?php echo $order['order_status'] == 'CANCELLED' ? 'selected' : ''; ?>>Hủy đơn hàng</option>
                                 </select>
                             </div>
                             <div class="mb-3">

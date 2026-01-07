@@ -29,38 +29,67 @@ require_once __DIR__ . '/includes/header.php';
 ?>
 
 <style>
-    .customer-section { background: #fff; padding: 24px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.04); border: 1px solid #eee; }
-    .customer-table thead th { 
-        background-color: #f8f9fa; 
-        color: #6c757d; 
-        font-weight: 600; 
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        border-bottom: none;
-        padding: 15px;
+    :root {
+        --primary-dark: #1e293b;
+        --accent-blue: #3b82f6;
+        --text-main: #334155;
+        --text-light: #64748b;
+        --bg-light: #f8fafc;
     }
-    .customer-table tbody td { 
-        padding: 15px; 
-        font-size: 14px; 
-        color: #2c3e50;
-        border-bottom: 1px solid #f1f1f1;
-        vertical-align: middle;
+
+    .customer-section { background: #fff; padding: 24px; border-radius: 1.25rem; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05); }
+    
+    .table-modern thead th { 
+        background: var(--bg-light); 
+        border-bottom: 2px solid #f1f5f9; 
+        font-size: 0.75rem; 
+        text-transform: uppercase; 
+        letter-spacing: 0.05em; 
+        color: var(--text-light); 
+        padding: 1rem 1.5rem; 
     }
+    .table-modern tbody td { 
+        padding: 1.25rem 1.5rem; 
+        vertical-align: middle; 
+        font-size: 0.9rem; 
+        border-bottom: 1px solid #f1f5f9; 
+        color: var(--text-main);
+    }
+
     .customer-avatar {
-        width: 40px;
-        height: 40px;
-        background: #f0f2f5;
-        border-radius: 50%;
+        width: 44px;
+        height: 44px;
+        background: linear-gradient(135deg, var(--primary-dark) 0%, #3b82f6 100%);
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #65676b;
-        font-weight: bold;
-        font-size: 16px;
-        margin-right: 12px;
+        color: #fff;
+        font-weight: 700;
+        font-size: 15px;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
     }
-    .search-bar { background: #f8f9fa; border-radius: 12px; padding: 20px; margin-bottom: 24px; border: 1px solid #eee; }
+
+    .status-badge { 
+        padding: 0.4rem 0.8rem; 
+        border-radius: 9999px; 
+        font-size: 0.75rem; 
+        font-weight: 700; 
+    }
+
+    .bg-soft-primary { background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    
+    .search-input-group {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 9999px;
+        padding-left: 1rem;
+        transition: all 0.3s;
+    }
+    .search-input-group:focus-within {
+        border-color: var(--accent-blue);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
 </style>
 
 <div class="admin-wrapper">
@@ -86,17 +115,17 @@ require_once __DIR__ . '/includes/header.php';
         </div>
 
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
-            <div class="card-header bg-white py-3 border-bottom">
+            <div class="card-header bg-white py-4 border-bottom border-secondary border-opacity-10">
                 <div class="row align-items-center g-3">
                     <div class="col-md-6">
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0 rounded-start-pill ps-3 pe-0"><i class="bi bi-search text-muted"></i></span>
-                            <input type="text" id="customer-search" class="form-control border-start-0 py-2 rounded-end-pill shadow-none" placeholder="Tìm kiếm theo tên, email hoặc số điện thoại...">
+                        <div class="input-group search-input-group border-0 shadow-sm" style="background: var(--bg-light);">
+                            <span class="input-group-text bg-transparent border-0 pe-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" id="customer-search" class="form-control bg-transparent border-0 py-2 shadow-none" placeholder="Tìm tên, email hoặc SĐT khách hàng...">
                         </div>
                     </div>
                     <div class="col-md-6 text-md-end">
-                        <span class="badge bg-soft-primary text-primary px-3 py-2 rounded-pill border">
-                            Tổng <span class="fw-bold"><?php echo count($customers); ?></span> hội viên
+                        <span class="badge bg-soft-primary px-4 py-2 rounded-pill border border-primary border-opacity-10 fw-bold">
+                            <i class="bi bi-people-fill me-2"></i>Tổng <?php echo count($customers); ?> thành viên
                         </span>
                     </div>
                 </div>
@@ -183,22 +212,7 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 </div>
 
-<style>
-.bg-soft-primary { background-color: rgba(13, 110, 253, 0.1); }
-.customer-avatar {
-    width: 42px;
-    height: 42px;
-    background: linear-gradient(135deg, var(--accent-color) 0%, #00d2ff 100%);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-weight: 700;
-    font-size: 14px;
-    box-shadow: 0 4px 10px rgba(13, 110, 253, 0.15);
-}
-.dropdown-item i { width: 1.2rem; }
+<?php require_once __DIR__ . '/includes/footer.php'; ?>
 </style>
 
 <script>

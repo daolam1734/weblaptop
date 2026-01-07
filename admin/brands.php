@@ -54,6 +54,79 @@ $brands = $pdo->query("SELECT * FROM brands ORDER BY id DESC")->fetchAll();
 require_once __DIR__ . '/includes/header.php';
 ?>
 
+<style>
+:root {
+    --primary-dark: #1e293b;
+    --accent-blue: #3b82f6;
+    --bg-light: #f8fafc;
+    --text-muted: #64748b;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.admin-content {
+    background-color: var(--bg-light);
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.card-modern {
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.2s ease;
+}
+
+.table-modern thead th {
+    background-color: #f1f5f9;
+    color: var(--primary-dark);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    padding: 1rem;
+    border: none;
+}
+
+.table-modern tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.brand-logo-preview {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    background: #fff;
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.btn-action {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+
+.btn-action:hover {
+    background: var(--accent-blue);
+    color: #fff;
+    border-color: var(--accent-blue);
+}
+
+.btn-action.btn-delete:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+}
+</style>
+
 <div class="admin-wrapper">
     <?php require_once __DIR__ . '/includes/sidebar.php'; ?>
     
@@ -64,13 +137,13 @@ require_once __DIR__ . '/includes/header.php';
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-1">
                         <li class="breadcrumb-item small"><a href="dashboard.php" class="text-decoration-none text-muted">Bảng điều khiển</a></li>
-                        <li class="breadcrumb-item small active" aria-current="page">Sản phẩm & Kho</li>
+                        <li class="breadcrumb-item small active" aria-current="page">Thương hiệu</li>
                     </ol>
                 </nav>
-                <h4 class="fw-bold mb-0">Quản Lý Thương Hiệu</h4>
+                <h4 class="fw-bold text-dark mb-0">Quản Lý Thương Hiệu</h4>
             </div>
             <div class="d-flex gap-2">
-                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="location.reload()">
+                <button type="button" class="btn btn-white border-0 shadow-sm rounded-pill px-3" onclick="location.reload()">
                     <i class="bi bi-arrow-clockwise me-1"></i> Làm mới
                 </button>
             </div>
@@ -89,8 +162,8 @@ require_once __DIR__ . '/includes/header.php';
                             <input type="hidden" name="existing_logo" id="existing_logo" value="">
                             
                             <div class="mb-4">
-                                <label class="form-label small fw-bold text-uppercase opacity-75">Tên thương hiệu</label>
-                                <input type="text" name="name" id="brand_name" class="form-control form-control-lg fs-6 rounded-3" placeholder="VD: Apple, Dell, ASUS" required>
+                                <label class="form-label small fw-bold text-muted">TÊN THƯƠNG HIỆU</label>
+                                <input type="text" name="name" id="brand_name" class="form-control border-0 bg-light rounded-pill px-3 shadow-none" placeholder="VD: Apple, Samsung..." required>
                             </div>
                             
                             <div class="mb-4">

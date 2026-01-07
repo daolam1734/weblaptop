@@ -20,7 +20,7 @@ $stmt = $pdo->query("
     SELECT DATE(created_at) as date, SUM(total) as total 
     FROM orders 
     WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-    AND order_status NOT IN ('huy', 'tra_lai')
+    AND order_status NOT IN ('CANCELLED')
     GROUP BY DATE(created_at)
 ");
 while ($row = $stmt->fetch()) {
@@ -42,7 +42,7 @@ $top_products = $pdo->query("
     FROM order_items oi
     JOIN products p ON oi.product_id = p.id
     JOIN orders o ON oi.order_id = o.id
-    WHERE o.order_status NOT IN ('huy', 'tra_lai')
+    WHERE o.order_status NOT IN ('CANCELLED')
     GROUP BY p.id
     ORDER BY total_sold DESC
     LIMIT 5
@@ -50,14 +50,13 @@ $top_products = $pdo->query("
 
 // 3. Order Status Distribution (With Vietnamese Labels)
 $status_map = [
-    'dang_cho' => 'Chờ xác nhận',
-    'da_xac_nhan' => 'Chờ lấy hàng',
-    'dang_xu_ly' => 'Đang xử lý',
-    'da_gui' => 'Đang giao',
-    'da_giao' => 'Đã giao',
-    'hoan_thanh' => 'Hoàn thành',
-    'huy' => 'Đã hủy',
-    'tra_lai' => 'Trả hàng'
+    'PENDING' => 'Chờ xác nhận',
+    'CONFIRMED' => 'Đã xác nhận',
+    'PROCESSING' => 'Đang xử lý',
+    'SHIPPING' => 'Đang giao',
+    'DELIVERED' => 'Đã giao',
+    'COMPLETED' => 'Hoàn thành',
+    'CANCELLED' => 'Đã hủy'
 ];
 
 $order_stats_raw = $pdo->query("
@@ -80,7 +79,7 @@ $category_stats = $pdo->query("
     JOIN products p ON oi.product_id = p.id
     JOIN categories c ON p.category_id = c.id
     JOIN orders o ON oi.order_id = o.id
-    WHERE o.order_status NOT IN ('huy', 'tra_lai')
+    WHERE o.order_status NOT IN ('CANCELLED')
     GROUP BY c.id
     ORDER BY total_sold DESC
 ")->fetchAll();
