@@ -307,7 +307,15 @@ require_once __DIR__ . '/includes/header.php';
                                             echo $order['payment_status'] === 'PAID' ? 'bg-success' : 
                                                 ($order['payment_status'] === 'REFUNDED' ? 'bg-info' : 'bg-warning text-dark'); 
                                         ?> font-monospace" style="font-size: 0.6rem;">
-                                            <?php echo $order['payment_status']; ?>
+                                            <?php 
+                                            $ps_map = [
+                                                'UNPAID' => 'Chưa thanh toán',
+                                                'PAID' => 'Đã thanh toán',
+                                                'REFUNDED' => 'Đã hoàn tiền',
+                                                'PENDING' => 'Chờ xử lý'
+                                            ];
+                                            echo $ps_map[$order['payment_status']] ?? $order['payment_status']; 
+                                            ?>
                                         </span>
                                     </div>
                                 </div>
@@ -318,7 +326,15 @@ require_once __DIR__ . '/includes/header.php';
                                             echo $order['shipping_status'] === 'DELIVERED' ? 'bg-success' : 
                                                 ($order['shipping_status'] === 'SHIPPING' ? 'bg-primary' : 'bg-secondary'); 
                                         ?> font-monospace" style="font-size: 0.6rem;">
-                                            <?php echo $order['shipping_status']; ?>
+                                            <?php 
+                                            $ss_map = [
+                                                'PENDING' => 'Chờ xử lý',
+                                                'SHIPPING' => 'Đang vận chuyển',
+                                                'DELIVERED' => 'Đã giao hàng',
+                                                'CANCELLED' => 'Đã hủy'
+                                            ];
+                                            echo $ss_map[$order['shipping_status']] ?? $order['shipping_status']; 
+                                            ?>
                                         </span>
                                     </div>
                                 </div>
