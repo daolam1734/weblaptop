@@ -117,11 +117,13 @@ require_once __DIR__ . '/includes/header.php';
         background: currentColor;
     }
 
-    .status-dang_cho { background: #fef3c7; color: #92400e; }
-    .status-da_xac_nhan { background: #e0f2fe; color: #075985; }
-    .status-da_gui { background: #e0e7ff; color: #3730a3; }
-    .status-da_giao { background: #dcfce7; color: #166534; }
-    .status-huy { background: #fee2e2; color: #991b1b; }
+    .status-PENDING { background: #fef3c7; color: #92400e; }
+    .status-CONFIRMED { background: #e0f2fe; color: #075985; }
+    .status-PROCESSING { background: #f3e8ff; color: #6b21a8; }
+    .status-SHIPPING { background: #e0e7ff; color: #3730a3; }
+    .status-DELIVERED { background: #dcfce7; color: #166534; }
+    .status-COMPLETED { background: #dcfce7; color: #166534; }
+    .status-CANCELLED { background: #fee2e2; color: #991b1b; }
     
     .customer-avatar { 
         width: 40px; 
@@ -191,11 +193,12 @@ require_once __DIR__ . '/includes/header.php';
             <!-- Order Tabs -->
             <div class="order-tabs">
                 <a href="orders.php?status=all" class="order-tab <?php echo $status_filter === 'all' ? 'active' : ''; ?>">Tất cả</a>
-                <a href="orders.php?status=dang_cho" class="order-tab <?php echo $status_filter === 'dang_cho' ? 'active' : ''; ?>">Chờ xác nhận</a>
-                <a href="orders.php?status=da_xac_nhan" class="order-tab <?php echo $status_filter === 'da_xac_nhan' ? 'active' : ''; ?>">Chờ lấy hàng</a>
-                <a href="orders.php?status=da_gui" class="order-tab <?php echo $status_filter === 'da_gui' ? 'active' : ''; ?>">Đang giao</a>
-                <a href="orders.php?status=da_giao" class="order-tab <?php echo $status_filter === 'da_giao' ? 'active' : ''; ?>">Đã giao</a>
-                <a href="orders.php?status=huy" class="order-tab <?php echo $status_filter === 'huy' ? 'active' : ''; ?>">Đã hủy</a>
+                <a href="orders.php?status=PENDING" class="order-tab <?php echo $status_filter === 'PENDING' ? 'active' : ''; ?>">Chờ xác nhận</a>
+                <a href="orders.php?status=CONFIRMED" class="order-tab <?php echo $status_filter === 'CONFIRMED' ? 'active' : ''; ?>">Đã xác nhận</a>
+                <a href="orders.php?status=PROCESSING" class="order-tab <?php echo $status_filter === 'PROCESSING' ? 'active' : ''; ?>">Đang xử lý</a>
+                <a href="orders.php?status=SHIPPING" class="order-tab <?php echo $status_filter === 'SHIPPING' ? 'active' : ''; ?>">Đang giao</a>
+                <a href="orders.php?status=COMPLETED" class="order-tab <?php echo $status_filter === 'COMPLETED' ? 'active' : ''; ?>">Hoàn tất</a>
+                <a href="orders.php?status=CANCELLED" class="order-tab <?php echo $status_filter === 'CANCELLED' ? 'active' : ''; ?>">Đã hủy</a>
             </div>
 
             <!-- Enhanced Search & Filter -->
@@ -273,11 +276,13 @@ require_once __DIR__ . '/includes/header.php';
                                 <span class="status-badge status-<?php echo $o['order_status']; ?>">
                                     <?php 
                                     $status_labels = [
-                                        'dang_cho' => 'Chờ xác nhận',
-                                        'da_xac_nhan' => 'Chờ lấy hàng',
-                                        'da_gui' => 'Đang giao',
-                                        'da_giao' => 'Đã giao',
-                                        'huy' => 'Đã hủy'
+                                        'PENDING' => 'Chờ xác nhận',
+                                        'CONFIRMED' => 'Đã xác nhận',
+                                        'PROCESSING' => 'Đang xử lý',
+                                        'SHIPPING' => 'Đang giao',
+                                        'DELIVERED' => 'Đã giao',
+                                        'COMPLETED' => 'Hoàn tất',
+                                        'CANCELLED' => 'Đã hủy'
                                     ];
                                     echo $status_labels[$o['order_status']] ?? $o['order_status'];
                                     ?>
@@ -294,14 +299,16 @@ require_once __DIR__ . '/includes/header.php';
                                     <div class="dropdown">
                                         <button class="btn-action dropdown-toggle no-caret" type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></button>
                                         <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 p-2">
-                                            <li class="dropdown-header small text-muted text-uppercase fw-bold pb-2 pt-1">Cập nhật đơn hàng</li>
+                                            <li class="dropdown-header small text-muted text-uppercase fw-bold pb-2 pt-1">Cập nhật nhanh</li>
                                             <?php
                                             $possible_statuses = [
-                                                'dang_cho' => 'Chờ xác nhận',
-                                                'da_xac_nhan' => 'Chờ lấy hàng',
-                                                'da_gui' => 'Đang giao',
-                                                'da_giao' => 'Đã giao',
-                                                'huy' => 'Hủy đơn hàng'
+                                                'PENDING' => 'Chờ xác nhận',
+                                                'CONFIRMED' => 'Đã xác nhận',
+                                                'PROCESSING' => 'Đang xử lý',
+                                                'SHIPPING' => 'Đang giao',
+                                                'DELIVERED' => 'Đã giao',
+                                                'COMPLETED' => 'Hoàn tất',
+                                                'CANCELLED' => 'Hủy đơn hàng'
                                             ];
                                             foreach ($possible_statuses as $val => $label): if ($val == $o['order_status']) continue;
                                             ?>
@@ -309,7 +316,7 @@ require_once __DIR__ . '/includes/header.php';
                                                 <form method="POST">
                                                     <input type="hidden" name="order_id" value="<?php echo $o['id']; ?>">
                                                     <input type="hidden" name="status" value="<?php echo $val; ?>">
-                                                    <button type="submit" class="dropdown-item rounded-3 small py-2 <?php echo $val === 'huy' ? 'text-danger' : ''; ?>">
+                                                    <button type="submit" class="dropdown-item rounded-3 small py-2 <?php echo $val === 'CANCELLED' ? 'text-danger' : ''; ?>">
                                                         <i class="bi bi-circle-fill me-2" style="font-size: 6px; vertical-align: middle;"></i> <?php echo $label; ?>
                                                     </button>
                                                 </form>

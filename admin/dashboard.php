@@ -10,10 +10,10 @@ if (empty($_SESSION['admin_logged_in'])) {
 
 // Statistics for "Business Insights"
 $today_orders = $pdo->query("SELECT COUNT(*) FROM orders WHERE DATE(created_at) = CURDATE()")->fetchColumn();
-$today_revenue = $pdo->query("SELECT SUM(total) FROM orders WHERE DATE(created_at) = CURDATE() AND order_status NOT IN ('huy', 'tra_lai')")->fetchColumn() ?: 0;
-$pending_orders = $pdo->query("SELECT COUNT(*) FROM orders WHERE order_status = 'dang_cho'")->fetchColumn();
-$processed_orders = $pdo->query("SELECT COUNT(*) FROM orders WHERE order_status = 'da_xac_nhan'")->fetchColumn();
-$shipped_orders = $pdo->query("SELECT COUNT(*) FROM orders WHERE order_status = 'da_gui'")->fetchColumn();
+$today_revenue = $pdo->query("SELECT SUM(total) FROM orders WHERE DATE(created_at) = CURDATE() AND order_status NOT IN ('CANCELLED', 'RETURNED')")->fetchColumn() ?: 0;
+$pending_orders = $pdo->query("SELECT COUNT(*) FROM orders WHERE order_status = 'PENDING'")->fetchColumn();
+$processed_orders = $pdo->query("SELECT COUNT(*) FROM orders WHERE order_status = 'CONFIRMED'")->fetchColumn();
+$shipped_orders = $pdo->query("SELECT COUNT(*) FROM orders WHERE order_status = 'SHIPPING'")->fetchColumn();
 $flash_sale_count = $pdo->query("SELECT COUNT(*) FROM products WHERE sale_price IS NOT NULL AND sale_price < price")->fetchColumn();
 $active_vouchers = $pdo->query("SELECT COUNT(*) FROM vouchers WHERE is_active = 1 AND (end_date >= NOW() OR end_date IS NULL)")->fetchColumn();
 
@@ -21,14 +21,14 @@ $active_vouchers = $pdo->query("SELECT COUNT(*) FROM vouchers WHERE is_active = 
 $total_products = $pdo->query("SELECT COUNT(*) FROM products")->fetchColumn();
 $total_customers = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'user'")->fetchColumn();
 $total_orders = $pdo->query("SELECT COUNT(*) FROM orders")->fetchColumn();
-$total_revenue = $pdo->query("SELECT SUM(total) FROM orders WHERE order_status NOT IN ('huy', 'tra_lai')")->fetchColumn() ?: 0;
+$total_revenue = $pdo->query("SELECT SUM(total) FROM orders WHERE order_status NOT IN ('CANCELLED', 'RETURNED')")->fetchColumn() ?: 0;
 
 // Revenue for last 7 days
 $revenue_7days = $pdo->query("
     SELECT DATE(created_at) as date, SUM(total) as total 
     FROM orders 
     WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY) 
-    AND order_status NOT IN ('huy', 'tra_lai')
+    AND order_status NOT IN ('CANCELLED', 'RETURNED')
     GROUP BY DATE(created_at)
     ORDER BY DATE(created_at) ASC
 ")->fetchAll(PDO::FETCH_KEY_PAIR);
@@ -93,10 +93,13 @@ require_once __DIR__ . '/includes/header.php';
     .table-modern tbody td { padding: 15px; vertical-align: middle; font-size: 14px; border-bottom: 1px solid #f8f9fa; }
     
     .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-block; }
-    .status-dang_cho { background: #fff4e5; color: #ff9800; }
-    .status-da_xac_nhan { background: #e3f2fd; color: #2196f3; }
-    .status-da_gui { background: #e8f5e9; color: #4caf50; }
-    .status-huy { background: #ffebee; color: #f44336; }
+    .status-PENDING { background: #fff4e5; color: #ff9800; }
+    .status-CONFIRMED { background: #e3f2fd; color: #2196f3; }
+    .status-PROCESSING { background: #f3e8ff; color: #6b21a8; }
+    .status-SHIPPING { background: #e8f5e9; color: #4caf50; }
+    .status-DELIVERED { background: #e8f5e9; color: #4caf50; }
+    .status-COMPLETED { background: #e8f5e9; color: #4caf50; }
+    .status-CANCELLED { background: #ffebee; color: #f44336; }
 
     .tet-badge { background: #d32f2f; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 11px; margin-left: 10px; font-weight: 600; letter-spacing: 0.5px; }
     
@@ -166,19 +169,19 @@ require_once __DIR__ . '/includes/header.php';
                     </div>
                     <div class="row g-0">
                         <div class="col">
-                            <a href="orders.php?status=dang_cho" class="todo-item d-block">
+                            <a href="orders.php?status=PENDING" class="todo-item d-block">
                                 <div class="todo-count"><?php echo $pending_orders; ?></div>
                                 <div class="todo-label">Chờ Xác Nhận</div>
                             </a>
                         </div>
                         <div class="col border-start">
-                            <a href="orders.php?status=da_xac_nhan" class="todo-item d-block">
+                            <a href="orders.php?status=CONFIRMED" class="todo-item d-block">
                                 <div class="todo-count"><?php echo $processed_orders; ?></div>
                                 <div class="todo-label">Chờ Lấy Hàng</div>
                             </a>
                         </div>
                         <div class="col border-start">
-                            <a href="orders.php?status=da_gui" class="todo-item d-block">
+                            <a href="orders.php?status=SHIPPING" class="todo-item d-block">
                                 <div class="todo-count"><?php echo $shipped_orders; ?></div>
                                 <div class="todo-label">Đang Giao</div>
                             </a>
@@ -237,11 +240,13 @@ require_once __DIR__ . '/includes/header.php';
                                         <span class="status-badge status-<?php echo $order['order_status']; ?>">
                                             <?php
                                             switch($order['order_status']) {
-                                                case 'dang_cho': echo 'Chờ xác nhận'; break;
-                                                case 'da_xac_nhan': echo 'Đã xác nhận'; break;
-                                                case 'da_gui': echo 'Đang giao'; break;
-                                                case 'da_giao': echo 'Đã giao'; break;
-                                                case 'huy': echo 'Đã hủy'; break;
+                                                case 'PENDING': echo 'Chờ xác nhận'; break;
+                                                case 'CONFIRMED': echo 'Đã xác nhận'; break;
+                                                case 'PROCESSING': echo 'Đang xử lý'; break;
+                                                case 'SHIPPING': echo 'Đang giao'; break;
+                                                case 'DELIVERED': echo 'Đã giao'; break;
+                                                case 'COMPLETED': echo 'Hoàn tất'; break;
+                                                case 'CANCELLED': echo 'Đã hủy'; break;
                                                 default: echo $order['order_status'];
                                             }
                                             ?>

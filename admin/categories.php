@@ -38,6 +38,53 @@ $categories = $pdo->query("SELECT * FROM categories ORDER BY id DESC")->fetchAll
 require_once __DIR__ . '/includes/header.php';
 ?>
 
+<style>
+    :root {
+        --primary-dark: #1e293b;
+        --accent-blue: #3b82f6;
+        --text-main: #334155;
+        --text-light: #64748b;
+        --bg-light: #f8fafc;
+    }
+
+    .card-modern {
+        border-radius: 1.25rem;
+        border: 1px solid rgba(0,0,0,0.05);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        overflow: hidden;
+    }
+
+    .table-modern thead th { 
+        background: var(--bg-light); 
+        border-bottom: 2px solid #f1f5f9; 
+        font-size: 0.75rem; 
+        text-transform: uppercase; 
+        letter-spacing: 0.05em; 
+        color: var(--text-light); 
+        padding: 1rem 1.5rem; 
+    }
+    .table-modern tbody td { 
+        padding: 1.25rem 1.5rem; 
+        vertical-align: middle; 
+        font-size: 0.9rem; 
+        border-bottom: 1px solid #f1f5f9; 
+        color: var(--text-main);
+    }
+    
+    .bg-soft-primary { background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+    
+    .form-control-modern {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s;
+    }
+    .form-control-modern:focus {
+        border-color: var(--accent-blue);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    }
+</style>
+
 <div class="admin-wrapper">
     <?php require_once __DIR__ . '/includes/sidebar.php'; ?>
     
@@ -63,31 +110,31 @@ require_once __DIR__ . '/includes/header.php';
         <div class="row g-4">
             <!-- Form Column -->
             <div class="col-lg-4">
-                <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 20px;">
-                    <div class="card-header bg-white py-3 border-bottom">
+                <div class="card card-modern sticky-top" style="top: 20px;">
+                    <div class="card-header bg-white py-3 border-bottom border-secondary border-opacity-10">
                         <h6 class="mb-0 fw-bold" id="form-title"><i class="bi bi-plus-circle me-2 text-primary"></i>Thêm danh mục mới</h6>
                     </div>
                     <div class="card-body p-4">
                         <form method="POST" id="category-form">
                             <input type="hidden" name="cat_id" id="cat_id" value="0">
                             <div class="mb-3">
-                                <label class="form-label small fw-bold text-uppercase opacity-75">Tên danh mục</label>
-                                <input type="text" name="name" id="cat_name" class="form-control form-control-lg fs-6 rounded-3" placeholder="VD: Laptop Gaming" required>
+                                <label class="form-label x-small fw-bold text-uppercase text-muted mb-2" style="letter-spacing: 0.05em;">Tên danh mục</label>
+                                <input type="text" name="name" id="cat_name" class="form-control form-control-modern" placeholder="VD: Laptop Gaming" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label small fw-bold text-uppercase opacity-75">Slug (Đường dẫn)</label>
-                                <input type="text" name="slug" id="cat_slug" class="form-control rounded-3" placeholder="laptop-gaming">
-                                <div class="form-text x-small">Để trống để tự động tạo từ tên.</div>
+                                <label class="form-label x-small fw-bold text-uppercase text-muted mb-2" style="letter-spacing: 0.05em;">Slug (Đường dẫn)</label>
+                                <input type="text" name="slug" id="cat_slug" class="form-control form-control-modern" placeholder="laptop-gaming">
+                                <div class="form-text x-small text-muted">Để trống để tự động tạo từ tên.</div>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label small fw-bold text-uppercase opacity-75">Mô tả</label>
-                                <textarea name="description" id="cat_desc" class="form-control rounded-3" rows="4" placeholder="Mô tả ngắn về danh mục..."></textarea>
+                                <label class="form-label x-small fw-bold text-uppercase text-muted mb-2" style="letter-spacing: 0.05em;">Mô tả</label>
+                                <textarea name="description" id="cat_desc" class="form-control form-control-modern" rows="4" placeholder="Mô tả ngắn về danh mục..."></textarea>
                             </div>
                             <div class="d-grid gap-2 pt-2">
-                                <button type="submit" name="add_category" id="submit-btn" class="btn btn-primary py-2 fw-bold rounded-3 shadow-sm">
+                                <button type="submit" name="add_category" id="submit-btn" class="btn btn-primary py-2 fw-bold rounded-pill shadow-sm">
                                     <i class="bi bi-save me-2"></i>Lưu danh mục
                                 </button>
-                                <button type="button" id="cancel-btn" class="btn btn-light border py-2 fw-bold rounded-3 d-none">
+                                <button type="button" id="cancel-btn" class="btn btn-light border py-2 fw-bold rounded-pill d-none">
                                     Hủy bỏ chỉnh sửa
                                 </button>
                             </div>
@@ -98,10 +145,10 @@ require_once __DIR__ . '/includes/header.php';
             
             <!-- List Column -->
             <div class="col-lg-8">
-                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
-                        <h6 class="mb-0 fw-bold"><i class="bi bi-list-ul me-2 text-primary"></i>Danh sách danh mục</h6>
-                        <span class="badge bg-soft-primary text-primary px-3 rounded-pill"><?php echo count($categories); ?> danh mục</span>
+                <div class="card card-modern">
+                    <div class="card-header bg-white py-3 border-bottom border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-bold text-dark"><i class="bi bi-list-ul me-2 text-primary"></i>Danh sách danh mục</h6>
+                        <span class="badge bg-soft-primary px-3 py-2 rounded-pill border border-primary border-opacity-10 fw-bold"><?php echo count($categories); ?> danh mục</span>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-modern align-middle mb-0">

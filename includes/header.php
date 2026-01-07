@@ -407,7 +407,15 @@ $menu_brands = $stmt_menu_brands->fetchAll();
         </div>
       </div>
       <div class="d-flex gap-3 align-items-center">
-        <a href="/weblaptop/notifications.php"><i class="bi bi-bell me-1"></i> Thông Báo</a>
+        <a href="/weblaptop/notifications.php" class="position-relative">
+          <i class="bi bi-bell me-1"></i> Thông Báo
+          <?php if (!empty($_SESSION['user_id'])): 
+            $notif_count = getUnreadNotificationCount($_SESSION['user_id']);
+            if ($notif_count > 0): ?>
+              <span class="badge rounded-pill bg-warning text-dark px-1 ms-1" style="font-size: 10px;"><?php echo $notif_count; ?></span>
+            <?php endif; 
+          endif; ?>
+        </a>
         <a href="/weblaptop/orders.php"><i class="bi bi-truck me-1"></i> Tra cứu đơn hàng</a>
         <a href="/weblaptop/contact.php"><i class="bi bi-question-circle me-1"></i> Hỗ Trợ</a>
         <?php if (!empty($_SESSION["user_id"])): ?>
