@@ -54,24 +54,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 require_once __DIR__ . '/../includes/header.php';
 ?>
-<div class="row justify-content-center my-5">
-  <div class="col-md-6">
-    <div class="card p-4">
-      <h4>Đăng nhập tài khoản</h4>
-      <form method="post">
-        <div class="mb-2"><label class="form-label">Email hoặc tên đăng nhập</label><input class="form-control" name="identity" required></div>
-        <div class="mb-2"><label class="form-label">Mật khẩu</label><input class="form-control" name="password" type="password" required></div>
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <div class="form-check"><input class="form-check-input" type="checkbox" id="remember" name="remember"><label class="form-check-label" for="remember">Ghi nhớ</label></div>
-          <a href="/weblaptop/auth/password_forgot.php">Quên mật khẩu?</a>
+<div class="row justify-content-center align-items-center" style="min-height: 50vh; padding: 20px 0;">
+  <div class="col-md-5 col-lg-4">
+    <div class="card auth-card shadow-lg border-0 rounded-4">
+      <div class="card-body p-4 p-md-5">
+        <h4 class="text-center fw-bold mb-4 text-danger">Đăng nhập</h4>
+        <?php if (!empty($errors)): ?>
+             <div class="alert alert-danger"><?= implode('<br>', $errors) ?></div>
+        <?php endif; ?>
+        <form method="post">
+          <div class="mb-3">
+            <label class="form-label text-muted">Email hoặc tên đăng nhập</label>
+            <input class="form-control form-control-lg bg-light" name="identity" required>
+          </div>
+          <div class="mb-3">
+             <label class="form-label text-muted">Mật khẩu</label>
+             <input class="form-control form-control-lg bg-light" name="password" type="password" required>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="remember" name="remember">
+                <label class="form-check-label text-secondary small" for="remember">Ghi nhớ đăng nhập</label>
+            </div>
+            <a href="/weblaptop/auth/password_forgot.php" class="small text-decoration-none fw-bold text-danger">Quên mật khẩu?</a>
+          </div>
+          <button class="btn btn-danger btn-lg w-100 fw-bold mb-3" type="submit">Đăng nhập</button>
+        </form>
+        <div class="text-center text-muted small">
+            Chưa có tài khoản? <a href="/weblaptop/auth/register.php" class="text-decoration-none fw-bold text-danger">Đăng ký ngay</a>
         </div>
-        <button class="btn btn-primary" type="submit">Đăng nhập</button>
-      </form>
-      <div class="mt-2">Chưa có tài khoản? <a href="/weblaptop/auth/register.php">Đăng ký</a></div>
-      <hr>
-      <div>
-        <a href="#" class="btn btn-outline-danger me-1">Đăng nhập với Google</a>
-        <a href="#" class="btn btn-outline-primary">Đăng nhập với Facebook</a>
       </div>
     </div>
   </div>

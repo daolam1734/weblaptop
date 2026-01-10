@@ -60,22 +60,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 require_once __DIR__ . '/../includes/header.php';
 ?>
-<div class="row justify-content-center my-5">
-  <div class="col-md-6">
-    <div class="card p-4">
-      <h4>Tạo tài khoản mới</h4>
+<div class="row justify-content-center align-items-center" style="min-height: 60vh; padding: 20px 0;">
+  <div class="col-md-6 col-lg-5">
+    <div class="card auth-card shadow-lg border-0 rounded-4">
+      <div class="card-body p-4 p-md-5">
+        <h4 class="text-center fw-bold mb-4 text-danger">Tạo tài khoản</h4>
+        <?php if (!empty($errors)): ?>
+             <div class="alert alert-danger"><?= implode('<br>', $errors) ?></div>
+        <?php endif; ?>
 
-      <form method="post">
-        <div class="mb-2"><label class="form-label">Họ và tên</label><input class="form-control" name="full_name" required></div>
-        <div class="mb-2"><label class="form-label">Email</label><input class="form-control" name="email" type="email" required></div>
-        <div class="mb-2"><label class="form-label">Số điện thoại</label><input class="form-control" name="phone" required></div>
-        <div class="mb-2"><label class="form-label">Tên đăng nhập (tuỳ chọn)</label><input class="form-control" name="username"></div>
-        <div class="mb-2"><label class="form-label">Mật khẩu</label><input class="form-control" name="password" type="password" required></div>
-        <div class="mb-2"><label class="form-label">Xác nhận mật khẩu</label><input class="form-control" name="confirm_password" type="password" required></div>
-        <div class="mb-3 form-check"><input class="form-check-input" id="agree" name="agree" type="checkbox"><label class="form-check-label" for="agree">Tôi đồng ý <a href="/weblaptop/terms.php">Điều khoản & Chính sách</a></label></div>
-        <button class="btn btn-primary" type="submit">Đăng ký</button>
-      </form>
-      <div class="mt-2">Đã có tài khoản? <a href="/weblaptop/auth/login.php">Đăng nhập</a></div>
+        <form method="post">
+          <div class="mb-3">
+              <label class="form-label text-muted">Họ và tên</label>
+              <input class="form-control bg-light" name="full_name" required>
+          </div>
+          <div class="row">
+              <div class="col-md-6 mb-3">
+                  <label class="form-label text-muted">Email</label>
+                  <input class="form-control bg-light" name="email" type="email" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                   <label class="form-label text-muted">Số điện thoại</label>
+                   <input class="form-control bg-light" name="phone" required>
+              </div>
+          </div>
+          <div class="mb-3">
+              <label class="form-label text-muted">Tên đăng nhập <small>(Tùy chọn)</small></label>
+              <input class="form-control bg-light" name="username">
+          </div>
+          <div class="mb-3">
+              <label class="form-label text-muted">Mật khẩu</label>
+              <input class="form-control bg-light" name="password" type="password" required>
+              <div class="form-text small">Tối thiểu 8 ký tự, bao gồm chữ và số.</div>
+          </div>
+          <div class="mb-3">
+               <label class="form-label text-muted">Xác nhận mật khẩu</label>
+               <input class="form-control bg-light" name="confirm_password" type="password" required>
+          </div>
+          
+          <div class="mb-4 form-check">
+              <input class="form-check-input" id="agree" name="agree" type="checkbox">
+              <label class="form-check-label small text-secondary" for="agree">
+                  Tôi đồng ý với <a href="/weblaptop/terms.php" class="text-decoration-none fw-bold text-danger">Điều khoản & Chính sách</a>
+              </label>
+          </div>
+          
+          <button class="btn btn-danger btn-lg w-100 fw-bold mb-3" type="submit">Đăng ký</button>
+        </form>
+        
+        <div class="text-center text-muted small">
+            Đã có tài khoản? <a href="/weblaptop/auth/login.php" class="text-decoration-none fw-bold text-danger">Đăng nhập</a>
+        </div>
+      </div>
     </div>
   </div>
 </div>
